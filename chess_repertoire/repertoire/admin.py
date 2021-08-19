@@ -1,3 +1,7 @@
+from _typeshed import OpenTextModeWriting
 from django.contrib import admin
 
-# Register your models here.
+from .models import Opening, Variation
+
+admin.site.register(Opening)
+admin.site.register(Variation)

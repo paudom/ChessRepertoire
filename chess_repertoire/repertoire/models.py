@@ -15,7 +15,6 @@ class Opening(models.Model):
             - category: the type of Opening (str)
             - image : image file identifying the Opening (file)
     """
-
     class Color(models.IntegerChoices):
         """ CHOICES::Color
             ---
@@ -52,11 +51,14 @@ class Opening(models.Model):
         max_length=constants.TEXT_MAX_LENGTH, blank=False, choices=Category.choices
     )
     image = models.ImageField(
-        upload_to=constants.OPENING_IMAGE_UPLOAD,
-        height_field=constants.OPENING_IMAGE_HEIGHT,
-        width_field=constants.OPENING_IMAGE_WIDTH,
+        upload_to=constants.IMAGE_UPLOAD,
+        height_field=constants.IMAGE_HEIGHT,
+        width_field=constants.IMAGE_WIDTH,
         max_length=constants.PATH_MAX_LENGTH
     )
+
+    class Meta:
+        ordering = ['name']
 
     def __str__(self) -> str:
         return f'{self.name} {self.__class__.__name__} for {"Black" if self.color else "White"}'
@@ -72,36 +74,10 @@ class Variation(models.Model):
         Arguments:
             - name: name of the Variation (str)
             - description: a quick description of the Variation (str)
-            - difficulty: the level of difficulty of the Variation (str)
+            - nature: the nature of the Line (str)
             - opening: the opening where the Variation belongs (Opening)
             - pgn_file: the PGN file of the Variation (file)
-    """
-
-    name = models.CharField(max_length=constants.TEXT_MAX_LENGTH, primary_key=True)
-    description = models.CharField(max_length=constants.TEXT_MAX_LENGTH)
-    difficulty = models.CharField(
-        max_length=constants.TEXT_MAX_LENGTH, blank=False, choices=Opening.Difficulty.choices)
-    opening = models.ForeignKey(Opening, on_delete=models.CASCADE)
-    pgn_file = models.FileField(upload_to=constants.PGN_UPLOAD, blank=True)
-
-    def __str__(self) -> str:
-        return f'{self.name} {self.__class__.__name__} from {self.opening.name}'
-    
-    def __repr__(self) -> str:
-        return f'{super().__repr__()}:{self.__class__.__name__}:{self.name}'
-
-class Line(models.Model):
-    """ MODEL::Line
-        ---
-        Description:
-        
-        Arguments:
-            - move: the move of the Line. (str)
-            - name: the name of the Line, if it has one (str)
-            - on_turn: the number of the turn of the Line (int)
-            - nature: the nature of the Line (str)
-            - variation: the Variation from which the Line belongs (Variation)
-            - pgn_file: the PGN file of the Line (file)
+            - image_file: the image indicating the position on the Board
     """
 
     class Nature(models.TextChoices):
@@ -112,16 +88,25 @@ class Line(models.Model):
         SHARP = "SHP", "Sharp"
         ADVANTAGEOUS = "ADV", "Advantageous"
 
-    move = models.CharField(max_length=constants.MOVE_MAX_LENGTH, primary_key=True)
-    name = models.CharField(max_length=constants.TEXT_MAX_LENGTH, blank=True)
+    name = models.CharField(max_length=constants.TEXT_MAX_LENGTH, primary_key=True)
+    description = models.CharField(max_length=constants.TEXT_MAX_LENGTH)
     on_turn = models.PositiveIntegerField()
     nature = models.CharField(
         max_length=constants.TEXT_MAX_LENGTH, blank=False, choices=Nature.choices)
-    variation = models.ForeignKey(Variation, on_delete=models.CASCADE)
+    opening = models.ForeignKey(Opening, on_delete=models.CASCADE)
     pgn_file = models.FileField(upload_to=constants.PGN_UPLOAD, blank=True)
+    image_file = models.ImageField(
+        upload_to=constants.IMAGE_UPLOAD,
+        height_field=constants.IMAGE_HEIGHT,
+        width_field=constants.IMAGE_WIDTH,
+        max_length=constants.PATH_MAX_LENGTH
+    )
+
+    class Meta:
+        ordering = ['-on_turn', 'name']
 
     def __str__(self) -> str:
-        return f'{self.move} {self.__class__.__name__} from {self.variation.name}'
-
+        return f'{self.name} {self.__class__.__name__} from {self.opening.name}'
+    
     def __repr__(self) -> str:
-        return f'{super().__repr__()}:{self.__class__.__name__}:{self.move}'
+        return f'{super().__repr__()}:{self.__class__.__name__}:{self.name}'
