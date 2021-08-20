@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 
 # From repository
-data
+openings
 .vscode
 
 # Error Handling
