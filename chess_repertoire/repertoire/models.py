@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.db import models
 from src import constants
 
@@ -65,6 +66,9 @@ class Opening(models.Model):
         width_field=None,
         max_length=constants.PATH_MAX_LENGTH
     )
+
+    def get_absolute_url(self):
+        return reverse('repertoire:opening_detail', args=[self.name])
 
     class Meta:
         ordering = ['name']

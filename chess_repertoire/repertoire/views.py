@@ -16,8 +16,8 @@ class OpeningIndex(ListView):
 
 class OpeningDetail(DetailView):
     model = Opening
-    template_name = 'repertoire/opening.html'
-    context_object_name = 'variations'
+    template_name = 'repertoire/opening_detail.html'
+    context_object_name = 'opening'
 
 # -- Variation Views -- #
 
