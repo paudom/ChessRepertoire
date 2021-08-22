@@ -1,4 +1,3 @@
-from _typeshed import OpenTextModeWriting
 from django.contrib import admin
 
 from .models import Opening, Variation

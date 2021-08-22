@@ -1,0 +1,23 @@
+{% extends 'repertoire/base.html' %}
+
+{% block  content %}
+
+<div class="album py-5 bg-dark">
+	<div class="container">
+		<div class="row">
+			{% for opening in openings %}
+				<div class="col-md-4">
+					<div class="card mb-4 box-shadow">
+						<img class="card-img-top" src="{{ opening.image.url }}" alt="Card Example">
+						<div class="card-body">
+							<h4 class="">{{ opening.name }}</h4>
+							<p class="card-text"></p>
+						</div>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+
+{% endblock %}

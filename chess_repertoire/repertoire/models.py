@@ -1,6 +1,15 @@
 from django.db import models
-from django.db.models.enums import Choices
 from src import constants
+
+# -- Helper functions -- #
+def opening_upload_attribute(opening_instance, filename):
+    folder = opening_instance.name.replace(' ', '_').lower()
+    return f"{folder}/{filename}"
+
+def variation_upload_attribute(variation_instance, filename):
+    opening_folder = variation_instance.opening.name.replace(' ', '_').lower()
+    variation_folder = variation_instance.name.replace(' ', '_').lower()
+    return f"{opening_folder}/{variation_folder}/{filename}"
 
 # -- Models -- #
 class Opening(models.Model):
@@ -51,9 +60,9 @@ class Opening(models.Model):
         max_length=constants.TEXT_MAX_LENGTH, blank=False, choices=Category.choices
     )
     image = models.ImageField(
-        upload_to=constants.IMAGE_UPLOAD,
-        height_field=constants.IMAGE_HEIGHT,
-        width_field=constants.IMAGE_WIDTH,
+        upload_to=opening_upload_attribute,
+        height_field=None,
+        width_field=None,
         max_length=constants.PATH_MAX_LENGTH
     )
 
@@ -92,13 +101,14 @@ class Variation(models.Model):
     description = models.CharField(max_length=constants.TEXT_MAX_LENGTH)
     on_turn = models.PositiveIntegerField()
     nature = models.CharField(
-        max_length=constants.TEXT_MAX_LENGTH, blank=False, choices=Nature.choices)
+        max_length=constants.TEXT_MAX_LENGTH, blank=False, choices=Nature.choices
+    )
     opening = models.ForeignKey(Opening, on_delete=models.CASCADE)
-    pgn_file = models.FileField(upload_to=constants.PGN_UPLOAD, blank=True)
+    pgn_file = models.FileField(upload_to=variation_upload_attribute, blank=True)
     image_file = models.ImageField(
-        upload_to=constants.IMAGE_UPLOAD,
-        height_field=constants.IMAGE_HEIGHT,
-        width_field=constants.IMAGE_WIDTH,
+        upload_to=variation_upload_attribute,
+        height_field=None,
+        width_field=None,
         max_length=constants.PATH_MAX_LENGTH
     )
 
