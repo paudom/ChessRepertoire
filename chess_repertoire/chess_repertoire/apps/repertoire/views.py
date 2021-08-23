@@ -1,11 +1,11 @@
-from django.shortcuts import render
 from django.http import HttpResponse
-from django.views.generic import ListView, DetailView
-from django.views.generic import CreateView, UpdateView, DeleteView
+from django.shortcuts import render
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  UpdateView)
 
+from .constants import MAX_PER_PAGE
 from .models import Opening, Variation
 
-from src.constants import MAX_PER_PAGE
 
 # -- Opening Views -- #
 class OpeningIndex(ListView):

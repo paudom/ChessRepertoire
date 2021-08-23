@@ -1,15 +1,25 @@
-from django.urls import reverse
+from pathlib import Path
+
+from django.conf import settings
 from django.db import models
-from src import constants
+
+from . import constants
+
 
 # -- Helper functions -- #
 def opening_upload_attribute(opening_instance, filename):
-    folder = opening_instance.name.replace(' ', '_').lower()
-    return f"{folder}/{filename}"
+    opening_folder = opening_instance.name.replace(' ', '_').lower()
+    filename = f"{opening_folder}{Path(filename).suffix}"
+    full_path = Path(settings.MEDIA_ROOT / f'{opening_folder}')
+    full_path.mkdir(exist_ok=True, parents=True)
+    return f"{opening_folder}/{filename}"
 
 def variation_upload_attribute(variation_instance, filename):
     opening_folder = variation_instance.opening.name.replace(' ', '_').lower()
     variation_folder = variation_instance.name.replace(' ', '_').lower()
+    filename = f"{variation_folder}{Path(filename).suffix}"
+    full_path = Path(settings.MEDIA_ROOT / f'{opening_folder}/{variation_folder}')
+    full_path.mkdir(exist_ok=True, parents=True)
     return f"{opening_folder}/{variation_folder}/{filename}"
 
 # -- Models -- #
@@ -66,9 +76,6 @@ class Opening(models.Model):
         width_field=None,
         max_length=constants.PATH_MAX_LENGTH
     )
-
-    def get_absolute_url(self):
-        return reverse('repertoire:opening_detail', args=[self.name])
 
     class Meta:
         ordering = ['name']

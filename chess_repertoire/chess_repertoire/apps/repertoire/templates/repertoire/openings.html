@@ -1,4 +1,4 @@
-{% extends 'repertoire/base.html' %}
+{% extends 'layouts/base.html' %}
 
 {% block  content %}
 
@@ -10,7 +10,7 @@
 					<div class="card mb-4 box-shadow">
 						<img class="card-img-top" src="{{ opening.image.url }}" alt="Card Example">
 						<div class="card-body">
-							<h4 class=""><a href="{{ opening.get_absolute_url }}">{{ opening.name }}</a></h4>
+							<h4 class=""><a href="{% url 'repertoire:opening_detail' opening.name %}">{{ opening.name }}</a></h4>
 							<p class="card-text"></p>
 						</div>
 					</div>
