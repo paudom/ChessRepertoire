@@ -7,13 +7,13 @@
 		<div class="col-12 pt-5">
 			<h2 class="pt-5">{{ opening.name }}</h2>
 			{% if opening.difficulty == 'B' %}
-				<p>Difficulty: <span class="badge bg-success">{{ opening.get_difficulty_display }}</span></p>
+				<p>Difficulty: <span class="badge" style="background-color: #90BE6D;">{{ opening.get_difficulty_display }}</span></p>
 			{% elif opening.difficulty == 'I' %}
-				<p>Difficulty: <span class="badge bg-primary">{{ opening.get_difficulty_display }}</span></p>
+				<p>Difficulty: <span class="badge" style="background-color: #577590;">{{ opening.get_difficulty_display }}</span></p>
 			{% elif opening.difficulty == 'A' %}
-				<p>Difficulty: <span class="badge bg-warning">{{ opening.get_difficulty_display }}</span></p>
+				<p>Difficulty: <span class="badge" style="background-color: #F8961E;">{{ opening.get_difficulty_display }}</span></p>
 			{% elif opening.difficulty == 'E' %}
-				<p>Difficulty: <span class="badge bg-danger">{{ opening.get_difficulty_display }}</span></p>
+				<p>Difficulty: <span class="badge" style="background-color: #892B64;">{{ opening.get_difficulty_display }}</span></p>
 			{% endif %}
 			{% if opening.color %}
 				<p>Color: <span class="badge bg-dark">Black</span></p>

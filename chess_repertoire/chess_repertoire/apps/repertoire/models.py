@@ -62,19 +62,20 @@ class Opening(models.Model):
         SYSTEM = "SY", "System"
         GAMBIT = "GB", "Gambit"
     
-    name = models.CharField(max_length=constants.TEXT_MAX_LENGTH, primary_key=True)
+    name = models.CharField(max_length=constants.MAX_LENGTH, primary_key=True)
+    description = models.TextField(max_length=constants.TEXT_MAX_LENGTH, default='')
     color = models.IntegerField(blank=False, choices=Color.choices)
     difficulty = models.CharField(
-        max_length=constants.TEXT_MAX_LENGTH, blank=False, choices=Difficulty.choices
+        max_length=constants.MAX_LENGTH, blank=False, choices=Difficulty.choices
     )
     category = models.CharField(
-        max_length=constants.TEXT_MAX_LENGTH, blank=False, choices=Category.choices
+        max_length=constants.MAX_LENGTH, blank=False, choices=Category.choices
     )
     image = models.ImageField(
         upload_to=opening_upload_attribute,
         height_field=None,
         width_field=None,
-        max_length=constants.PATH_MAX_LENGTH
+        max_length=constants.TEXT_MAX_LENGTH
     )
 
     class Meta:
@@ -108,11 +109,11 @@ class Variation(models.Model):
         SHARP = "SHP", "Sharp"
         ADVANTAGEOUS = "ADV", "Advantageous"
 
-    name = models.CharField(max_length=constants.TEXT_MAX_LENGTH, primary_key=True)
+    name = models.CharField(max_length=constants.MAX_LENGTH, primary_key=True)
     description = models.CharField(max_length=constants.TEXT_MAX_LENGTH)
     on_turn = models.PositiveIntegerField()
     nature = models.CharField(
-        max_length=constants.TEXT_MAX_LENGTH, blank=False, choices=Nature.choices
+        max_length=constants.MAX_LENGTH, blank=False, choices=Nature.choices
     )
     opening = models.ForeignKey(Opening, on_delete=models.CASCADE)
     pgn_file = models.FileField(upload_to=variation_upload_attribute, blank=True)
@@ -120,7 +121,7 @@ class Variation(models.Model):
         upload_to=variation_upload_attribute,
         height_field=None,
         width_field=None,
-        max_length=constants.PATH_MAX_LENGTH
+        max_length=constants.TEXT_MAX_LENGTH
     )
 
     class Meta:
