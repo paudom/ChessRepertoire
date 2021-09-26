@@ -40,8 +40,8 @@ class Opening(models.Model):
             ---
             Description: the color of the Opening: (0 [White], 1 [Black])
         """
-        WHITE = 0, "White"
-        BLACK = 1, "Black"
+        WHITE = 0, "WHITE"
+        BLACK = 1, "BLACK"
 
     class Difficulty(models.TextChoices):
         """ CHOICES::Difficulty
@@ -58,9 +58,9 @@ class Opening(models.Model):
             ---
             Description: the type of Opening.
         """
-        CLASSIC = "CL", "Classic"
-        SYSTEM = "SY", "System"
-        GAMBIT = "GB", "Gambit"
+        CLASSIC = "CL", "CLASSIC"
+        SYSTEM = "SY", "SYSTEM"
+        GAMBIT = "GB", "GAMBIT"
     
     name = models.CharField(max_length=constants.MAX_LENGTH, primary_key=True)
     description = models.TextField(max_length=constants.TEXT_MAX_LENGTH, default='')
@@ -103,11 +103,11 @@ class Variation(models.Model):
 
     class Nature(models.TextChoices):
         """"""
-        THEORIC = "THC", "Theoric"
-        POSITIONAL = "PST", "Positional"
-        TRICKY = "TRC", "Tricky"
-        SHARP = "SHP", "Sharp"
-        ADVANTAGEOUS = "ADV", "Advantageous"
+        THEORIC = "THC", "THEORIC"
+        POSITIONAL = "PST", "POSITIONAL"
+        TRICKY = "TRC", "TRICKY"
+        SHARP = "SHP", "SHARP"
+        ADVANTAGEOUS = "ADV", "ADVANTAGEOUS"
 
     name = models.CharField(max_length=constants.MAX_LENGTH, primary_key=True)
     description = models.CharField(max_length=constants.TEXT_MAX_LENGTH)

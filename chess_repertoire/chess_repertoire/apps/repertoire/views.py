@@ -20,6 +20,3 @@ class OpeningDetail(DetailView):
     context_object_name = 'opening'
 
 # -- Variation Views -- #
-
-
-# -- Other Views -- #

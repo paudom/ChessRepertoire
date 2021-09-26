@@ -1,27 +1,130 @@
 {% extends 'layouts/base.html' %}
 
+{% block title %}{{ opening.name }}{% endblock %}
+
+<!-- NAVBAR -->
+
+{% load static %}
+
 {% block content %}
 
-<div class="container">
-	<div class="row">
-		<div class="col-12 pt-5">
-			<h2 class="pt-5">{{ opening.name }}</h2>
-			{% if opening.difficulty == 'B' %}
-				<p>Difficulty: <span class="badge" style="background-color: #90BE6D;">{{ opening.get_difficulty_display }}</span></p>
-			{% elif opening.difficulty == 'I' %}
-				<p>Difficulty: <span class="badge" style="background-color: #577590;">{{ opening.get_difficulty_display }}</span></p>
-			{% elif opening.difficulty == 'A' %}
-				<p>Difficulty: <span class="badge" style="background-color: #F8961E;">{{ opening.get_difficulty_display }}</span></p>
-			{% elif opening.difficulty == 'E' %}
-				<p>Difficulty: <span class="badge" style="background-color: #892B64;">{{ opening.get_difficulty_display }}</span></p>
-			{% endif %}
-			{% if opening.color %}
-				<p>Color: <span class="badge bg-dark">Black</span></p>
-			{% else %}
-				<p>Color: <span class="badge bg-light text-dark">White</span></p>
-			{% endif %}
-			<p>Category: {{ opening.get_category_display }}</p>
+<div class="container mt-5 mx-auto" style="max-width:  850px;">
+	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 430px;">
+		<div class="row py-2 text-center">
+			<h2>{{ opening.name }}</h2>
 		</div>
+		<div class="row py-3" style="width: 98%;">
+			<div class="container mx-3" style="height: 40px;">
+				<h6 class="fw-bolder">Description:</h6>
+				<p class="fw-light fst-italic" style="max-height: 100px; text-align: justify;"">{{ opening.description }}</p>
+			</div>
+		</div>
+		<div class="row py-1" style="position: relative; top:60px">
+			<div class="col">
+				<h6 class="text-center fw-bolder" style="justify-content: center">Difficulty</h6>
+			</div>
+			<div class="col">
+				<h6 class="text-center fw-bolder" style="justify-content: center">Category</h6>
+			</div>
+			<div class="col">
+				<h6 class="text-center fw-bolder" style="justify-content: center">Color</h6>
+			</div>
+		</div>
+		<div class="row py-1" style="position: relative; top: 55px;">
+			<div class="col">
+				<h5 class="text-center" style="justify-content: center;">
+					{% if opening.difficulty == 'B' %}
+						<span class="badge text-light" style="background-color: #90BE6D;">{{ opening.get_difficulty_display }}</span>
+					{% elif opening.difficulty == 'I' %}
+						<span class="badge text-light" style="background-color: #FFB703;">{{ opening.get_difficulty_display }}</span>
+					{% elif opening.difficulty == 'A' %}
+						<span class="badge text-light" style="background-color: #F3722C;">{{ opening.get_difficulty_display }}</span>
+					{% elif opening.difficulty == 'E' %}
+						<span class="badge text-light" style="background-color: #F94144;">{{ opening.get_difficulty_display }}</span>
+					{% endif %}
+				</h5>
+			</div>
+			<div class="col">
+				<h5 class="text-center" style="justify-content: center;">
+					{% if opening.category == 'CL' %}
+						<span class="badge text-light" style="background-color: #7D8597;">{{ opening.get_category_display }}</span>
+					{% elif opening.category == 'SY' %}
+						<span class="badge text-light" style="background-color: #455E89;">{{ opening.get_category_display }}</span>
+					{% elif opening.category == 'GB' %}
+						<span class="badge text-light" style="background-color: #5FA8D3;">{{ opening.get_category_display }}</span>
+					{% endif %}
+				</h5>
+			</div>
+			<div class="col">
+				<h5 class="text-center" style="justify-content: center;">
+					{% if not opening.color %}
+						<span class="badge text-dark" style="background-color: #F5F3F4;">{{ opening.get_color_display }}</span>
+					{% else %}
+						<span class="badge text-light" style="background-color: #161A1D;">{{ opening.get_color_display }}</span>
+					{% endif %}
+				</h5>
+			</div>
+		</div>
+		<div class="row" style="position: relative; top:45px; left:40px">
+			<div class="col">
+				{% if opening.difficulty == 'B' %}
+					{% if not opening.color %}
+						<img src="{% static 'repertoire/pieces/white_knight.png' %}" class="img-fluid" alt="Piece">
+					{% else %}
+						<img src="{% static 'repertoire/pieces/black_knight.png' %}" class="img-fluid" alt="Piece">
+					{% endif %}
+				{% elif opening.difficulty == 'I' %}
+					{% if not opening.color %}
+						<img src="{% static 'repertoire/pieces/white_rook.png' %}" class="img-fluid" alt="Piece">
+					{% else %}
+						<img src="{% static 'repertoire/pieces/black_rook.png' %}" class="img-fluid" alt="Piece">
+					{% endif %}
+				{% elif opening.difficulty == 'A' %}
+					{% if not opening.color %}
+						<img src="{% static 'repertoire/pieces/white_queen.png' %}" class="img-fluid" alt="Piece">
+					{% else %}
+						<img src="{% static 'repertoire/pieces/black_queen.png' %}" class="img-fluid" alt="Piece">
+					{% endif %}
+				{% elif opening.difficulty == 'E' %}
+					{% if not opening.color %}
+						<img src="{% static 'repertoire/pieces/white_king.png' %}" class="img-fluid" alt="Piece">
+					{% else %}
+						<img src="{% static 'repertoire/pieces/black_king.png' %}" class="img-fluid" alt="Piece">
+					{% endif %}
+				{% endif %}
+			</div>
+			<div class="col">
+				{% if opening.category == 'CL' %}
+					{% if not opening.color %}
+						<img src="{% static 'repertoire/pieces/white_king.png' %}" class="img-fluid" alt="Piece">
+					{% else %}
+						<img src="{% static 'repertoire/pieces/black_king.png' %}" class="img-fluid" alt="Piece">
+					{% endif %}
+				{% elif opening.category == 'SY' %}
+					{% if not opening.color %}
+						<img src="{% static 'repertoire/pieces/white_bishop.png' %}" class="img-fluid" alt="Piece">
+					{% else %}
+						<img src="{% static 'repertoire/pieces/black_bishop.png' %}" class="img-fluid" alt="Piece">
+					{% endif %}
+				{% elif opening.category == 'GB' %}
+					{% if not opening.color %}
+						<img src="{% static 'repertoire/pieces/white_knight.png' %}" class="img-fluid" alt="Piece">
+					{% else %}
+						<img src="{% static 'repertoire/pieces/black_knight.png' %}" class="img-fluid" alt="Piece">
+					{% endif %}
+				{% endif %}
+			</div>
+			<div class="col">
+				{% if not opening.color %}
+					<img src="{% static 'repertoire/pieces/white_pawn.png' %}" class="img-fluid" alt="Piece">
+				{% else %}
+					<img src="{% static 'repertoire/pieces/black_pawn.png' %}" class="img-fluid" alt="Piece">
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	<div class="text-center">
+		<a href="{% url 'repertoire:openings'%}" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">Back</a>
 	</div>
 </div>
 

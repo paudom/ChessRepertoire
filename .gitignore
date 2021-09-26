@@ -129,7 +129,6 @@ dmypy.json
 .pyre/
 
 # From repository
-static
 media
 .vscode
 
