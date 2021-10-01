@@ -26,7 +26,8 @@ body {
 a:link, a:visited {
     color: var(--link);
     text-decoration: none;
-    transition: color 0.15s, background 0.15s;
+    transition: color 0.15s; 
+    background: 0.15s;
 }
 
 a:focus, a:hover {

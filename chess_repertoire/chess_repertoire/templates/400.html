@@ -1,0 +1,23 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Error 400{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5 mx-auto" style="max-width:  850px;">
+	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 200px;">
+		<div class="row py-2 text-center">
+			<h2>Bad Request</h2>
+		</div>
+		<div class="row py-3" style="width: 98%;">
+			<div class="container mx-3" style="height: 40px;">
+				<h6 class="fw-bolder" style="text-align: center;">Ups!! Seems that you requested a wrong item.</h6>
+				<p class="fw-light" style="max-height: 100px; text-align: center;">Please, go back to the Openings list.</p>
+			</div>
+		</div>
+		<div class="text-center py-2">
+			<a href="{% url 'repertoire:openings'%}" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">Openings</a>
+		</div>
+	</div>
+</div>
+{% endblock %}

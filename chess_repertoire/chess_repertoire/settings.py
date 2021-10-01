@@ -13,8 +13,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-PROJECT_NAME = 'chess_repertoire'
+BASE_DIR = Path(__file__).resolve().parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
@@ -23,9 +22,9 @@ PROJECT_NAME = 'chess_repertoire'
 SECRET_KEY = 'django-insecure-5a3mncb=5vt0jzhp^nrx=yoki8%pwnjt2m&11%m-sd-o3*jfvk'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1']
 
 
 # Application definition
@@ -58,7 +57,7 @@ ROOT_URLCONF = 'chess_repertoire.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / f'{PROJECT_NAME}/templates'],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -119,7 +118,7 @@ USE_TZ = True
 
 # Media root
 
-MEDIA_ROOT = BASE_DIR / f'{PROJECT_NAME}/media'
+MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'
 
 # Static files (CSS, JavaScript, Images)
@@ -127,9 +126,9 @@ MEDIA_URL = '/media/'
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
-    BASE_DIR / f'{PROJECT_NAME}/static/'
+    BASE_DIR / 'static/'
 ]
-STATIC_ROOT = BASE_DIR / f'{PROJECT_NAME}/assets/'
+STATIC_ROOT = BASE_DIR / 'staticfiles/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
