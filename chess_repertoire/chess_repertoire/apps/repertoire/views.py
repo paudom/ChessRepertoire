@@ -1,11 +1,13 @@
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+from django.views.generic import (CreateView, DetailView, ListView, UpdateView, TemplateView)
 
 from .constants import MAX_PER_PAGE
 from .models import Opening, Variation
 
+# -- General Views -- #
+class AboutPage(TemplateView):
+    template_name = 'repertoire/about.html'
 
 # -- Opening Views -- #
 class OpeningIndex(ListView):

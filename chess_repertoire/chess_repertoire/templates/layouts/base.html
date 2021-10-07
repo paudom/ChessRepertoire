@@ -47,7 +47,14 @@
 
   <!-- Body -->
   <body>
+    <!-- Navigation Bar -->
+    {% include 'includes/navbar.html' %}
+
+    <!-- Content -->
     {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    {% include 'includes/footer.html' %}
 
     <!-- Specific JS -->
     {% block javascripts %}{% endblock %}

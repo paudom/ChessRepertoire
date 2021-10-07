@@ -19,6 +19,7 @@ body {
     font-size: 14px;
     color: var(--body-fg);
     background: var(--body-bg);
+    padding-bottom: 200px;
 }
 
 /* LINKS */

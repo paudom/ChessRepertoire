@@ -2,18 +2,16 @@
 
 {% block title %}{{ opening.name }}{% endblock %}
 
-<!-- NAVBAR -->
-
 {% load static %}
 
 {% block content %}
 
-<div class="container mt-5 mx-auto" style="max-width:  850px;">
+<div class="container mt-4 mx-auto" style="max-width: 850px;">
 	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 430px;">
 		<div class="row py-2 text-center">
 			<h2>{{ opening.name }}</h2>
 		</div>
-		<div class="row py-3" style="width: 98%;">
+		<div class="row py-2" style="width: 98%;">
 			<div class="container mx-3" style="height: 40px;">
 				<h6 class="fw-bolder">Description:</h6>
 				<p class="fw-light fst-italic" style="max-height: 100px; text-align: justify;">{{ opening.description }}</p>
