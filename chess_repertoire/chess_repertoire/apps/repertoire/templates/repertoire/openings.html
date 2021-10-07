@@ -77,7 +77,7 @@
 							<a href="{% url 'repertoire:opening_detail' opening.name %}" class="btn text-light" style="width: 150px; background-color: #A11D33;" role="button">Information</a>
 						</div>
 						<div class="col text-center">
-							<a href="#" class="btn text-light" style="width: 150px; background-color: #6E1423;" role="button">Modify</a>
+							<a href="{% url 'repertoire:modify_opening' opening.name %}" class="btn text-light" style="width: 150px; background-color: #6E1423;" role="button">Modify</a>
 						</div>
 					</div>
 				</div>
@@ -86,7 +86,7 @@
 	{% endfor %}
 	<!-- Pagination goes here -->
 	<div class="text-center">
-		<a href="#" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">New Opening</a>
+		<a href="{% url 'repertoire:new_opening' %}" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">New Opening</a>
 	</div>
 </div>
 {% endblock %}

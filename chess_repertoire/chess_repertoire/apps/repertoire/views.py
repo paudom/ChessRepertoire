@@ -21,4 +21,14 @@ class OpeningDetail(DetailView):
     template_name = 'repertoire/opening_detail.html'
     context_object_name = 'opening'
 
+class NewOpening(CreateView):
+    model = Opening
+    fields = ['name', 'description', 'color', 'difficulty', 'category', 'image']
+    template_name = 'repertoire/new_opening.html'
+
+class ModifyOpening(UpdateView):
+    model = Opening
+    fields = ['name', 'description', 'color', 'difficulty', 'category', 'image']
+    template_name = 'repertoire/modify_opening.html'
+
 # -- Variation Views -- #

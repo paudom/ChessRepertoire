@@ -2,6 +2,7 @@ from pathlib import Path
 
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 
 from . import constants
 
@@ -80,6 +81,9 @@ class Opening(models.Model):
 
     class Meta:
         ordering = ['name']
+
+    def get_absolute_url(self):
+        return reverse('repertoire:opening_detail', kwargs={'name': self.name})
 
     def __str__(self) -> str:
         return f'{self.name} {self.__class__.__name__} for {"Black" if self.color else "White"}'
