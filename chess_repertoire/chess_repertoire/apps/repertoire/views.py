@@ -4,6 +4,7 @@ from django.views.generic import (CreateView, DetailView, ListView, UpdateView, 
 
 from .constants import MAX_PER_PAGE
 from .models import Opening, Variation
+from .forms import OpeningForm
 
 # -- General Views -- #
 class AboutPage(TemplateView):
@@ -23,12 +24,12 @@ class OpeningDetail(DetailView):
 
 class NewOpening(CreateView):
     model = Opening
-    fields = ['name', 'description', 'color', 'difficulty', 'category', 'image']
-    template_name = 'repertoire/new_opening.html'
+    form_class = OpeningForm
+    template_name = 'repertoire/opening_form.html'
 
 class ModifyOpening(UpdateView):
     model = Opening
-    fields = ['name', 'description', 'color', 'difficulty', 'category', 'image']
-    template_name = 'repertoire/modify_opening.html'
+    form_class = OpeningForm
+    template_name = 'repertoire/opening_form.html'
 
 # -- Variation Views -- #

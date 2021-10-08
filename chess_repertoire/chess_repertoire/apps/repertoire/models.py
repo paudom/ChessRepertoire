@@ -83,7 +83,7 @@ class Opening(models.Model):
         ordering = ['name']
 
     def get_absolute_url(self):
-        return reverse('repertoire:opening_detail', kwargs={'name': self.name})
+        return reverse('repertoire:opening_detail', kwargs={'pk': self.name})
 
     def __str__(self) -> str:
         return f'{self.name} {self.__class__.__name__} for {"Black" if self.color else "White"}'
