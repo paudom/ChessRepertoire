@@ -7,7 +7,7 @@
 {% block content %}
 
 <div class="container mt-4 mx-auto" style="max-width: 850px;">
-	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 430px;">
+	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 485px;">
 		<div class="row py-2 text-center">
 			<h2>{{ opening.name }}</h2>
 		</div>
@@ -118,6 +118,14 @@
 				{% else %}
 					<img src="{% static 'repertoire/pieces/black_pawn.png' %}" class="img-fluid" alt="Piece">
 				{% endif %}
+			</div>
+		</div>
+		<div class="row" style="position: relative; top:60px;">
+			<div class="col text-center">
+				<a href="#" class="btn text-light" style="width: 300px; background-color: #6E1423;" role="button">Variations</a>
+			</div>
+			<div class="col text-center">
+				<a href="{% url 'repertoire:modify_opening' opening.name %}" class="btn text-light" style="width: 300px; background-color: #6E1423;" role="button">Modify</a>
 			</div>
 		</div>
 	</div>

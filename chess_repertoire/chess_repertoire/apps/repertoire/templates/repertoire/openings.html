@@ -2,12 +2,45 @@
 
 {% block title %}Openings{% endblock %}
 
-<!-- NAVBAR -->
-
 {% block content %}
 
-<div class="container mt-4 mx-auto" style="max-width:  850px;">
-	{% for opening in openings %}
+<div class="container mt-4 mx-auto" style="max-width: 850px;">
+	<div class="container mt-2 mb-2 px-0 rounded" style="background-color:#DDB892; height: 90px;">
+		<form method="GET">
+			<div class="form-row pt-2 px-3">
+				<div class="row">
+					<div class="col" style="position: relative; left: 10px; padding-left: 5px; padding-right: 5px;">
+						<p class="fw-bold text-center">Name:</p>
+					</div>
+					<div class="col" style="padding-left: 5px; padding-right: 5px;">
+						{{ filter.form.name }}
+					</div>
+					<div class="col" style="padding-left: 5px; padding-right: 5px;">
+						<p class="fw-bold">Difficulty:</p>
+					</div>
+					<div class="col" style="padding-left: 5px; padding-right: 5px;">
+						{{ filter.form.difficulty }}
+					</div>
+					<div class="col" style="padding-left: 5px; padding-right: 5px;">
+						<p class="fw-bold">Category:</p>
+					</div>
+					<div class="col" style="padding-left: 5px; padding-right: 5px;">
+						{{ filter.form.category }}
+					</div>
+					<div class="col" style="position: relative; left: 15px; padding-left: 5px; padding-right: 5px;">
+						<p class="fw-bold">Color:</p>
+					</div>
+					<div class="col" style="padding-left: 5px; padding-right: 5px;">
+						{{ filter.form.color }}
+					</div>
+				</div>
+			</div>
+			<div class="text-center">
+				<button type="submit" class="btn text-light" style="width: 250px; background-color: #6D6875;" role="button">Search</button>
+			</div>
+		</form>
+	</div>
+	{% for opening in filter.qs %}
 		<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 201px;">
 			<div class="row">
 				<!-- Image File -->
@@ -84,7 +117,7 @@
 			</div>
 		</div>
 	{% endfor %}
-	<div class="text-center">
+	<div class="text-center pt-1">
 		<a href="{% url 'repertoire:new_opening' %}" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">New Opening</a>
 	</div>
 

@@ -5,6 +5,7 @@ from django.views.generic import (CreateView, DetailView, ListView, UpdateView, 
 from .constants import MAX_PER_PAGE
 from .models import Opening, Variation
 from .forms import OpeningForm
+from .filters import OpeningFilter
 
 # -- General Views -- #
 class AboutPage(TemplateView):
@@ -16,6 +17,11 @@ class OpeningIndex(ListView):
     paginate_by = MAX_PER_PAGE
     context_object_name = 'openings'
     template_name = 'repertoire/openings.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['filter'] = OpeningFilter(self.request.GET, queryset=self.get_queryset())
+        return context
 
 class OpeningDetail(DetailView):
     model = Opening
