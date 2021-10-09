@@ -3,6 +3,9 @@
 {% block title %}Openings{% endblock %}
 
 {% block content %}
+
+{% load custom_tags %}
+
 <div class="container mx-auto px-0" style="max-width: 950px;">
 	<div class="container mt-4 px-0 rounded" style="background-color:#DDB892; height: 55px;">
 		<form method="GET">
@@ -41,7 +44,7 @@
 	</div>
 </div>
 <div class="container mt-4 mx-auto" style="max-width: 850px;">
-	{% for opening in filter.qs %}
+	{% for opening in openings %}
 		<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 201px;">
 			<div class="row">
 				<!-- Image File -->
@@ -126,22 +129,20 @@
 	<div class="pt-3 text-center">
 		{% if is_paginated %}
 
-			{% if page_obj.has_previous %}
-				<a class="btn text-light" href="?page=1" style="width: 100px; background-color: #6D6875;">First</a>
-				<a class="btn text-light" href="?page={{ page_obj.previous_page_number }}" style="width: 100px; background-color: #6D6875;">Previous</a>
+			{% if openings.has_previous %}
+				<a class="btn text-light" href="{% custom_url 1 'page' request.GET.urlencode %}" style="width: 100px; background-color: #6D6875;">First</a>
 			{% endif %}
 
-			{% for num in page_obj.paginator.page_range %}
-				{% if page_obj.number == num %}
-					<a class="btn text-light" href="?page={{ num }}" style="width: 100px; background-color: #8F8B94;">{{ num }}</a>
-				{% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3'%}
-					<a class="btn text-light" href="?page={{ num }}" style="width: 100px; background-color: #6D6875;">{{ num }}</a>
+			{% for num in openings.paginator.page_range %}
+				{% if openings.number == num %}
+					<a class="btn text-light" href="{% custom_url num 'page' request.GET.urlencode %}" style="width: 100px; background-color: #8F8B94;">{{ num }}</a>
+				{% elif num > openings.number|add:'-3' and num < openings.number|add:'3'%}
+					<a class="btn text-light" href="{% custom_url num 'page' request.GET.urlencode %}" style="width: 100px; background-color: #6D6875;">{{ num }}</a>
 				{% endif %}
 			{% endfor %}
 
-			{% if page_obj.has_next %}
-				<a class="btn text-light" href="?page={{ page_obj.next_page_number }}" style="width: 100px; background-color: #6D6875;">Next</a>
-				<a class="btn text-light" href="?page={{ page_obj.paginator.num_pages }}" style="width: 100px; background-color: #6D6875;">Last</a>
+			{% if openings.has_next %}
+				<a class="btn text-light" href="{% custom_url openings.paginator.num_pages 'page' request.GET.urlencode %}" style="width: 100px; background-color: #6D6875;">Last</a>
 			{% endif %}
 
 		{% endif %}

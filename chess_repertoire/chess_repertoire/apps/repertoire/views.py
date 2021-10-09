@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import (CreateView, DetailView, ListView, UpdateView, TemplateView)
+from django.core.paginator import Paginator
 
 from .constants import MAX_OPENING_PER_PAGE
 from .models import Opening, Variation
@@ -15,12 +16,16 @@ class AboutPage(TemplateView):
 class OpeningIndex(ListView):
     model = Opening
     paginate_by = MAX_OPENING_PER_PAGE
-    context_object_name = 'openings'
     template_name = 'repertoire/openings.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['filter'] = OpeningFilter(self.request.GET, queryset=self.get_queryset())
+        # -- Pagination -- #
+        paginator = Paginator(context['filter'].qs, OpeningIndex.paginate_by)
+        page_number = self.request.GET.get('page')
+        openings = paginator.get_page(page_number)
+        context['openings'] = openings
         return context
 
 class OpeningDetail(DetailView):

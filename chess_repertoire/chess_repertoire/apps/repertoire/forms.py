@@ -7,6 +7,7 @@ class OpeningForm(forms.ModelForm):
     class Meta:
         model = Opening
         fields = '__all__'
+        exclude = ['image']
 
         widgets = {
             'name': forms.TextInput(
