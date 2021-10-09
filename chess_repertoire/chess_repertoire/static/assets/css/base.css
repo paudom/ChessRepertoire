@@ -48,3 +48,15 @@ a.section:link, a.section:visited {
 a.section:focus, a.section:hover {
     text-decoration: underline;
 }
+
+.form-submit-button:link, .form-submit-button:visited {
+    color: var(--link);
+    text-decoration: none;
+    transition: color 0.15s; 
+    background: 0.15s;
+}
+
+.form-submit-button:focus, .form-submit-button:hover {
+    color: var(--link);
+    text-decoration: underline;
+}

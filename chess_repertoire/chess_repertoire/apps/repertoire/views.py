@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.views.generic import (CreateView, DetailView, ListView, UpdateView, TemplateView)
 
-from .constants import MAX_PER_PAGE
+from .constants import MAX_OPENING_PER_PAGE
 from .models import Opening, Variation
 from .forms import OpeningForm
 from .filters import OpeningFilter
@@ -14,7 +14,7 @@ class AboutPage(TemplateView):
 # -- Opening Views -- #
 class OpeningIndex(ListView):
     model = Opening
-    paginate_by = MAX_PER_PAGE
+    paginate_by = MAX_OPENING_PER_PAGE
     context_object_name = 'openings'
     template_name = 'repertoire/openings.html'
 

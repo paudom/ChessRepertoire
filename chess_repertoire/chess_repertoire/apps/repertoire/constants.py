@@ -1,7 +1,7 @@
 # -- CONSTANTS -- #
 
 # -- View constants -- #
-MAX_PER_PAGE = 4
+MAX_OPENING_PER_PAGE = 4
 
 # -- Lengths -- #
 MAX_LENGTH = 50
