@@ -1,0 +1,153 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Openings{% endblock %}
+
+{% block content %}
+
+{% load custom_tags %}
+
+<!-- Filter for Openings -->
+<div class="container mx-auto px-0" style="max-width: 950px;">
+	<div class="container mt-4 px-0 rounded" style="background-color:#DDB892; height: 55px;">
+		<form method="GET">
+			<div class="form-row pt-2 px-2">
+				<div class="row">
+					<div class="col pt-2" style="padding-left: 5px; padding-right: 5px;">
+						<p class="fw-bold text-center">Name:</p>
+					</div>
+					<div class="col pt-2" style="position: relative; left:-15px; padding-left: 5px; padding-right: 5px;">
+						{{ filter.form.name }}
+					</div>
+					<div class="col pt-2" style="position: relative; left:-5px; padding-left: 5px; padding-right: 5px;">
+						<p class="fw-bold">Difficulty:</p>
+					</div>
+					<div class="col pt-2" style="position: relative; left:-5px; padding-left: 5px; padding-right: 5px;">
+						{{ filter.form.difficulty }}
+					</div>
+					<div class="col pt-2" style="position: relative; left: 5px; padding-left: 5px; padding-right: 5px;">
+						<p class="fw-bold">Category:</p>
+					</div>
+					<div class="col pt-2" style="padding-left: 5px; padding-right: 5px;">
+						{{ filter.form.category }}
+					</div>
+					<div class="col pt-2" style="position: relative; left:10px; padding-left: 5px; padding-right: 5px;">
+						<p class="fw-bold">Color:</p>
+					</div>
+					<div class="col pt-2" style="position: relative; left:-20px; padding-left: 5px; padding-right: 5px;">
+						{{ filter.form.color }}
+					</div>
+					<div class="col">
+						<button type="submit" class="btn text-light" style="width: 80px; position: relative; left:-10px; background-color: #6D6875;" role="button">Search</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<!-- Displaying all the Openings -->
+<div class="container mt-4 mx-auto" style="max-width: 850px;">
+	{% for opening in openings %}
+		<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 201px;">
+			<div class="row">
+				<!-- Image File -->
+				<div class="col-md-4">
+					<div class="container-fluid px-0 mx-2 my-2">
+						<img src="{{ opening.image.url }}" class="img-fluid rounded" style="width: 100%; height: 185px; object-fit: cover;" alt="Opening">
+					</div>
+				</div>
+				<!-- Opening Content -->
+				<div class="col-md-8">
+					<div class="row">
+						<div class="container-fluid my-2" style="height: 30px;">
+							<h4>{{ opening.name }}</h4>
+						</div>
+					</div>
+					<div class="row py-2" style="position: relative; top: 8px; height: 30px;">
+						<div class="col">
+							<h6 class="text-center" style="justify-content: center">Difficulty</h6>
+						</div>
+						<div class="col">
+							<h6 class="text-center" style="justify-content: center;">Category</h6>
+						</div>
+						<div class="col">
+							<h6 class="text-center" style="justify-content: center;">Color</h6>
+						</div>
+					</div>
+					<div class="row py-1" style="position: relative; top: 8px; height: 30px;">
+						<div class="col">
+							<h5 class="text-center" style="justify-content: center;">
+								{% if opening.difficulty == 'B' %}
+									<span class="badge text-light" style="background-color: #90BE6D;">{{ opening.get_difficulty_display }}</span>
+								{% elif opening.difficulty == 'I' %}
+									<span class="badge text-light" style="background-color: #FFB703;">{{ opening.get_difficulty_display }}</span>
+								{% elif opening.difficulty == 'A' %}
+									<span class="badge text-light" style="background-color: #F3722C;">{{ opening.get_difficulty_display }}</span>
+								{% elif opening.difficulty == 'E' %}
+									<span class="badge text-light" style="background-color: #F94144;">{{ opening.get_difficulty_display }}</span>
+								{% endif %}
+							</h5>
+						</div>
+						<div class="col">
+							<h5 class="text-center" style="justify-content: center;">
+								{% if opening.category == 'CL' %}
+									<span class="badge text-light" style="background-color: #7D8597;">{{ opening.get_category_display }}</span>
+								{% elif opening.category == 'SY' %}
+									<span class="badge text-light" style="background-color: #455E89;">{{ opening.get_category_display }}</span>
+								{% elif opening.category == 'GB' %}
+									<span class="badge text-light" style="background-color: #5FA8D3;">{{ opening.get_category_display }}</span>
+								{% endif %}
+							</h5>
+						</div>
+						<div class="col">
+							<h5 class="text-center" style="justify-content: center;">
+								{% if not opening.color %}
+									<span class="badge text-dark" style="background-color: #F5F3F4;">{{ opening.get_color_display }}</span>
+								{% else %}
+									<span class="badge text-light" style="background-color: #161A1D;">{{ opening.get_color_display }}</span>
+								{% endif %}
+							</h5>
+						</div>
+					</div>
+					<div class="row my-2 px-2 py-4 " style="position: relative; top: 5px; height: 30px;">
+						<div class="col text-center">
+							<a href="{% url 'repertoire:opening_variations' opening.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Variations</a>
+						</div>
+						<div class="col text-center">
+							<a href="{% url 'repertoire:opening_detail' opening.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Information</a>
+						</div>
+						<div class="col text-center">
+							<a href="{% url 'repertoire:modify_opening' opening.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Modify</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+	<div class="text-center pt-1">
+		<a href="{% url 'repertoire:new_opening' %}" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">New Opening</a>
+	</div>
+
+	<!-- Pagination -->
+	<div class="pt-3 text-center">
+		{% if is_paginated %}
+
+			{% if openings.has_previous %}
+				<a class="btn text-light" href="{% custom_url 1 'page' request.GET.urlencode %}" style="width: 100px; background-color: #6D6875;">First</a>
+			{% endif %}
+
+			{% for num in openings.paginator.page_range %}
+				{% if openings.number == num %}
+					<a class="btn text-light" href="{% custom_url num 'page' request.GET.urlencode %}" style="width: 100px; background-color: #8F8B94;">{{ num }}</a>
+				{% elif num > openings.number|add:'-3' and num < openings.number|add:'3'%}
+					<a class="btn text-light" href="{% custom_url num 'page' request.GET.urlencode %}" style="width: 100px; background-color: #6D6875;">{{ num }}</a>
+				{% endif %}
+			{% endfor %}
+
+			{% if openings.has_next %}
+				<a class="btn text-light" href="{% custom_url openings.paginator.num_pages 'page' request.GET.urlencode %}" style="width: 100px; background-color: #6D6875;">Last</a>
+			{% endif %}
+
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

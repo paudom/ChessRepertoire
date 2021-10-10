@@ -1,0 +1,20 @@
+{% load static %}
+<!-- Navbar -->
+<div class="container mt-3 mx-auto rounded" style="width: 950px; height: 65px; background-color: #242423">
+	<div class="container-fluid" style="width: 850px">
+		<div class="row text-align pt-2">
+			<div class="col-md-1">
+				<img src="{% static 'assets/img/logo.png' %}" alt="" width="40" height="50" class="d-inline-block">
+			</div>
+			<div class="col-md-5 py-1">
+				<h2 style="text-align: left; color: #F5F3F4;">Chess Repertoire</h2>
+			</div>
+			<div class="col-md-3 py-2" style="position: relative; left: 230px;">
+				<a href="{% url 'repertoire:openings'%}" style="color: #F5F3F4;"><h4>Openings</h4></a>
+			</div>
+			<div class="col-md-3 py-2" style="position: relative; left: 150px;">
+				<a href="{% url 'repertoire:about'%}" style="color: #F5F3F4;"><h4>About</h4></a>
+			</div>
+		</div>
+	</div>
+</div>

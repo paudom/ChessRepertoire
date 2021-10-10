@@ -1,0 +1,69 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}New Variation{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mx-auto" style="max-width: 850px;">
+	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 615px;">
+		<form method="POST" enctype="multipart/form-data">
+			{% csrf_token %}
+			<div class="form-row py-3" style="padding-left: 80px; padding-right: 80px;">
+				<div class="form-group">
+					<h5>Variation Name:</h5>
+					{{ form.name }}
+				</div>
+			</div>
+			<div class="form-row py-2" style="padding-left: 80px; padding-right: 80px;">
+				<div class="form-group">
+					<h5>Variation Description:</h5>
+					{{ form.description }}
+				</div>
+			</div>
+			<div class="form-row py-2" style="padding-left: 80px; padding-right: 80px;">
+				<div class="row">
+					<div class="col">
+						<h6>On Turn:</h6>
+					</div>
+					<div class="col">
+						<h6>Nature:</h6>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						{{ form.on_turn }}
+					</div>
+					<div class="col">
+						{{ form.nature }}
+					</div>
+				</div>
+			</div>
+			<div class="form-row py-2" style="padding-left: 80px; padding-right: 80px;">
+				<div class="row">
+					<div class="col">
+						<h6>Image File:</h6>
+						<div class="form-group">
+							{{ form.image_file }}
+						</div>
+					</div>
+					<div class="col">
+						<h6>PGN File:</h6>
+						<div class="form-group">
+							{{ form.pgn_file }}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="form-row" style="padding-left: 150px; padding-right: 150px; position: relative; top: 10px;">
+				<div class="row">
+					<div class="col">
+						<button type="submit" class="btn text-light" style="width: 250px; background-color: #6D6875;" role="button">Submit</button>
+					</div>
+					<div class="col">
+						<a href="{% url 'repertoire:opening_variations' opening.name %}" class="btn text-light" style="width: 250px; background-color: #6D6875;" role="button">Cancel</a>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}

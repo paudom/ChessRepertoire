@@ -1,0 +1,107 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Variations from {{ opening.name }}{% endblock %}
+
+{% block content %}
+
+<div class="container mt-3 mx-auto" style="max-width: 850px;">
+	<h3 class="text-center" style="color: #F5F3F4;">Variations from {{ opening.name }}</h3>
+	{% for variation in variations %}
+		<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 276px;">
+			<div class="row">
+				<!-- Image File -->
+				<div class="col-md-4">
+					<div class="container-fluid px-0 mx-2 my-2">
+						<img src="{{ variation.image_file.url }}" class="img-fluid rounded" style="width: 100%; height: 100%; object-fit: contain;" alt="Variation">
+					</div>
+				</div>
+				<!-- Variation Content -->
+				<div class="col-md-8">
+					<div class="row">
+						<div class="container-fluid mt-2" style="height: 30px;">
+							<h4>{{ variation.name }}</h4>
+						</div>
+					</div>
+					<div class="row py-2" style="width: 99%;">
+						<div class="container mx-3" style="position: relative; left: -10px; height: 50px;">
+							<p class="fw-light fst-italic" style="max-height: 100px; text-align: justify;">{{ variation.description }}</p>
+						</div>
+					</div>
+					<div class="row py-2" style="position: relative; top: 15px; height: 30px;">
+						<div class="col">
+							<h6 class="text-center" style="justify-content: center">On Turn</h6>
+						</div>
+						<div class="col">
+							<h6 class="text-center" style="position: relative; left: -25px; justify-content: center;">Nature</h6>
+						</div>
+					</div>
+					<div class="row py-1" style="position: relative; top: 15px; height: 50px;">
+						<div class="col">
+							<h5 class="text-center" style="justify-content: center;">
+								{% if not opening.color %}
+									<span class="badge text-dark" style="background-color: #F5F3F4; width: 75px;">{{ variation.on_turn }}</span>
+								{% else %}
+									<span class="badge text-light" style="background-color: #161A1D;">{{ variation.on_turn }}</span>
+								{% endif %}
+							</h5>
+						</div>
+						<div class="col">
+							<h5 class="text-center" style="position: relative; left: -25px; justify-content: center;">
+								{% if variation.nature == 'THC' %}
+									<span class="badge text-light" style="background-color: #7F5539;">{{ variation.get_nature_display }}</span>
+								{% elif variation.nature == 'PST' %}
+									<span class="badge text-light" style="background-color: #495057;">{{ variation.get_nature_display }}</span>
+								{% elif variation.nature == 'TRC' %}
+									<span class="badge text-light" style="background-color: #5C4D7D;">{{ variation.get_nature_display }}</span>
+								{% elif variation.nature == 'SHP' %}
+									<span class="badge text-light" style="background-color: #800F2F;">{{ variation.get_nature_display }}</span>
+								{% elif variation.nature == 'ADV' %}
+									<span class="badge text-light" style="background-color: #43AA8B;">{{ variation.get_nature_display }}</span>	
+								{% endif %}
+							</h5>
+						</div>
+					</div>
+					<div class="row my-2 px-2 py-4 " style="height: 30px;">
+						<div class="col text-center">
+							<a href="#" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Practice</a>
+						</div>
+						<div class="col text-center">
+							<a href="#" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Review</a>
+						</div>
+						<div class="col text-center">
+							<a href="{% url 'repertoire:modify_variation' opening.name variation.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Modify</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+	<div class="text-center pt-1">
+		<a href="{% url 'repertoire:new_variation' opening.name %}" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">New Variation</a>
+	</div>
+
+	<!-- Pagination -->
+	<div class="pt-3 text-center">
+		{% if is_paginated %}
+
+			{% if page_obj.has_previous %}
+				<a class="btn text-light" href="?page=1" style="width: 100px; background-color: #6D6875;">First</a>
+			{% endif %}
+
+			{% for num in page_obj.paginator.page_range %}
+				{% if page_obj.number == num %}
+					<a class="btn text-light" href="?page={{ num }}" style="width: 100px; background-color: #8F8B94;">{{ num }}</a>
+				{% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3'%}
+					<a class="btn text-light" href="?page={{ num }}" style="width: 100px; background-color: #6D6875;">{{ num }}</a>
+				{% endif %}
+			{% endfor %}
+
+			{% if page_obj.has_next %}
+				<a class="btn text-light" href="?page={{ page_obj.paginator.num_pages }}" style="width: 100px; background-color: #6D6875;">Last</a>
+			{% endif %}
+
+		{% endif %}
+	</div>
+</div>
+
+{% endblock %}

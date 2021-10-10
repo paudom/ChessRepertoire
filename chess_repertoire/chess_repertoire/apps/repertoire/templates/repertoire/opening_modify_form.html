@@ -1,0 +1,65 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Opening{% endblock %}
+
+{% block content %}
+<div class="container mt-4 mx-auto" style="max-width: 850px;">
+	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 625px;">
+		<form method="POST" enctype="multipart/form-data">
+			{% csrf_token %}
+			<div class="form-row py-3" style="padding-left: 80px; padding-right: 80px;">
+				<div class="form-group">
+					<h5>Opening Name:</h5>
+					{{ form.name }}
+				</div>
+			</div>
+			<div class="form-row py-2" style="padding-left: 80px; padding-right: 80px;">
+				<div class="form-group">
+					<h5>Opening Description:</h5>
+					{{ form.description }}
+				</div>
+			</div>
+			<div class="form-row py-2" style="padding-left: 80px; padding-right: 80px;">
+				<div class="row">
+					<div class="col">
+						<h6>Difficulty:</h6>
+					</div>
+					<div class="col">
+						<h6>Category:</h6>
+					</div>
+					<div class="col">
+						<h6>Color:</h6>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col">
+						{{ form.difficulty }}
+					</div>
+					<div class="col">
+						{{ form.category }}
+					</div>
+					<div class="col">
+						{{ form.color }}
+					</div>
+				</div>
+			</div>
+			<div class="form-row pt-2 p" style="padding-left: 80px; padding-right: 80px;">
+				<h6>Image File (Current: {{ opening.image.url }}):</h6>
+				<div class="form-group">
+					{{ form.image }}
+				</div>
+			</div>
+			<div class="form-row" style="padding-left: 150px; padding-right: 150px; position: relative; top: 20px;">
+				<div class="row">
+					<div class="col">
+						<button type="submit" class="btn text-light" style="width: 250px; background-color: #6D6875;" role="button">Submit</button>
+					</div>
+					<div class="col">
+						<a href="{% url 'repertoire:openings'%}" class="btn text-light" style="width: 250px; background-color: #6D6875;" role="button">Cancel</a>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,62 @@
+/* Variable Definitions */
+:root {
+	--body-fg: #000000;
+	--body-bg: #333533;
+
+	--header-color: #B5838D;
+  	--header-bg: #000000;
+
+	--link: #000000;
+}
+
+html, body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    color: var(--body-fg);
+    background: var(--body-bg);
+    padding-bottom: 200px;
+}
+
+/* LINKS */
+
+a:link, a:visited {
+    color: var(--link);
+    text-decoration: none;
+    transition: color 0.15s; 
+    background: 0.15s;
+}
+
+a:focus, a:hover {
+    color: var(--link);
+    text-decoration: underline;
+}
+
+a img {
+    border: none;
+}
+
+a.section:link, a.section:visited {
+    color: var(--link);
+    text-decoration: none;
+}
+
+a.section:focus, a.section:hover {
+    text-decoration: underline;
+}
+
+.form-submit-button:link, .form-submit-button:visited {
+    color: var(--link);
+    text-decoration: none;
+    transition: color 0.15s; 
+    background: 0.15s;
+}
+
+.form-submit-button:focus, .form-submit-button:hover {
+    color: var(--link);
+    text-decoration: underline;
+}
