@@ -6,6 +6,7 @@
 
 {% load custom_tags %}
 
+<!-- Filter for Openings -->
 <div class="container mx-auto px-0" style="max-width: 950px;">
 	<div class="container mt-4 px-0 rounded" style="background-color:#DDB892; height: 55px;">
 		<form method="GET">
@@ -43,6 +44,7 @@
 		</form>
 	</div>
 </div>
+<!-- Displaying all the Openings -->
 <div class="container mt-4 mx-auto" style="max-width: 850px;">
 	{% for opening in openings %}
 		<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 201px;">
@@ -60,7 +62,7 @@
 							<h4>{{ opening.name }}</h4>
 						</div>
 					</div>
-					<div class="row py-2" style="height: 30px;">
+					<div class="row py-2" style="position: relative; top: 8px; height: 30px;">
 						<div class="col">
 							<h6 class="text-center" style="justify-content: center">Difficulty</h6>
 						</div>
@@ -71,7 +73,7 @@
 							<h6 class="text-center" style="justify-content: center;">Color</h6>
 						</div>
 					</div>
-					<div class="row py-1" style="height: 30px;">
+					<div class="row py-1" style="position: relative; top: 8px; height: 30px;">
 						<div class="col">
 							<h5 class="text-center" style="justify-content: center;">
 								{% if opening.difficulty == 'B' %}
@@ -106,9 +108,9 @@
 							</h5>
 						</div>
 					</div>
-					<div class="row my-2 px-2 py-4 " style="height: 30px;">
+					<div class="row my-2 px-2 py-4 " style="position: relative; top: 5px; height: 30px;">
 						<div class="col text-center">
-							<a href="#" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Variations</a>
+							<a href="{% url 'repertoire:opening_variations' opening.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Variations</a>
 						</div>
 						<div class="col text-center">
 							<a href="{% url 'repertoire:opening_detail' opening.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Information</a>
