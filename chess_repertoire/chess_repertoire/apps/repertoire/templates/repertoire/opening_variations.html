@@ -63,10 +63,10 @@
 					</div>
 					<div class="row my-2 px-2 py-4 " style="height: 30px;">
 						<div class="col text-center">
-							<a href="#" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Practice</a>
+							<a href="{% url 'repertoire:practice' opening.name variation.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Practice</a>
 						</div>
 						<div class="col text-center">
-							<a href="#" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Review</a>
+							<a href="{% url 'repertoire:review' opening.name variation.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Review</a>
 						</div>
 						<div class="col text-center">
 							<a href="{% url 'repertoire:modify_variation' opening.name variation.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Modify</a>

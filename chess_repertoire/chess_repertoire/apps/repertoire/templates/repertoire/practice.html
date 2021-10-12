@@ -1,0 +1,14 @@
+{% extends 'layouts/base.html' %}
+
+{% block title %}Practice {{ variation.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-3 mx-auto" style="max-width: 850px;">
+	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 625px;">
+		{{ board }}
+	</div>
+	<div class="text-center">
+		<a href="{% url 'repertoire:opening_variations' opening.name %}" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">Back</a>
+	</div>
+</div>
+{% endblock %}
