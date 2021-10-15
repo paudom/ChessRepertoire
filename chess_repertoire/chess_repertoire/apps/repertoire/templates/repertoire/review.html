@@ -1,22 +1,25 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/base_without_navbar.html' %}
 
 {% block title %}Review {{ variation.name }}{% endblock %}
 
 {% block content %}
 <div class="container mt-3 mx-auto" style="max-width: 850px;">
 	<h4 class="text-center" style="color: #F5F3F4;">Reviewing {{ variation.name }} from {{ opening.name }}</h4>
-	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 585px;">
-		<div class="container py-3 text-center rounded">
+	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 610px;">
+		<div class="container pt-3 pb-1 text-center rounded">
 			{{ board }}
 		</div>
 		<form method="POST">
 			{% csrf_token %}
 			<div class="container text-center" style="max-width: 500px;">
 				<div class="form-row">
-					<div class="row text-center">
-						<button type="submit" value="Previous" name="prev_turn" class="btn text-light mx-2" style="width: 75px; background-color: #6D6875;" role="button">{{ prev }}</button>
-						<button type="submit" value="Next" name="next_turn" class="btn text-light mx-2" style="width: 75px; background-color: #6D6875;" role="button">{{ next }}</button>
-						<button type="submit" value="Next" name="next_turn" class="btn text-light mx-2" style="width: 75px; background-color: #6D6875;" role="button">{{ next }}</button>
+					<div class="row py-1">
+						{% for move in all_moves %}
+							<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-light mx-2" style="width: 75px; background-color: #6D6875;" role="button">{{ move }}</button>
+						{% endfor %}
+					</div>
+					<div class="row">
+						<button type="submit" value="undo" name="undo" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Undo Move</button>
 					</div>
 				</div>
 			</div>
