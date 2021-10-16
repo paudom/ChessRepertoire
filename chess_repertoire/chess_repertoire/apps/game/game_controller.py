@@ -1,16 +1,20 @@
-import chess
 import chess.pgn as pgn
 import chess.svg as svg
-from chess_repertoire.apps.repertoire.constants import CHESS_BOARD_SIZE
 
 class ChessReviewer():
-    def __init__(self, pgn_file, color, run_moves=[], size=500):
-        with open(pgn_file) as file:
-            self.state = pgn.read_game(file)
-        self.run_visited_moves(run_moves)
-        self.flipped = True if color else False
+    def __init__(self, pgn_file, color, run_moves=[], size=500, turn=False):
+        self.pgn_path = pgn_file
+        self.state = ChessReviewer.read_pgn_file(pgn_file)
         self.size = size
-            
+        self.flipped = True if color else False
+        self.turn = turn  # False is White, Black is True
+        self.run_visited_moves(run_moves)
+
+    @staticmethod
+    def read_pgn_file(pgn_file):
+        with open(pgn_file) as file:
+            return pgn.read_game(file)
+
     @property
     def board(self):
         return svg.board(
@@ -33,12 +37,14 @@ class ChessReviewer():
     
     def next_move(self, move):
         self.possible_moves
-        try:
-            index = self.moves.index(move)
-        except ValueError:
-            return False
+        index = self.moves.index(move)
         self.state = self.state.variations[index]
-        return True
+        self.turn = not self.turn
         
     def undo_move(self):
         self.state = self.state.parent
+        self.turn = not self.turn
+
+    def restart(self):
+        self.state = ChessReviewer.read_pgn_file(self.pgn_path)
+        self.turn = False

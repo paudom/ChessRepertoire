@@ -67,6 +67,8 @@ class OpeningVariations(ListView):
         self.request.session.flush()
         if not self.request.session.get('moves', None):
             self.request.session['moves'] = []
+        if not self.request.session.get('turn', None):
+            self.request.session['turn'] = False
         return super().dispatch(self.request, *args, **kwargs)
 
     def get_queryset(self, **kwargs):
@@ -128,13 +130,15 @@ class ReviewVariation(View):
         self.reviewer = ChessReviewer(
             self.variation.pgn_file.path,
             self.variation.opening.color,
-            run_moves=self.request.session['moves']
+            run_moves=self.request.session['moves'],
+            turn=self.request.session['turn']
         )
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
         context = self.get_context_data(
-            self.opening, self.variation, self.reviewer.board, self.reviewer.possible_moves
+            self.opening, self.variation, self.reviewer.board, self.reviewer.possible_moves,
+            turn=self.request.session['turn']
         )
         return render(self.request, self.template_name, context)
 
@@ -142,16 +146,28 @@ class ReviewVariation(View):
         if self.request.POST.get('undo', None):
             self.reviewer.undo_move()
             self.request.session['moves'].pop()
+            self.request.session['turn'] = not self.request.session['turn']
             context = self.get_context_data(
-                self.opening, self.variation, self.reviewer.board, self.reviewer.possible_moves
+                self.opening, self.variation, self.reviewer.board, self.reviewer.possible_moves,
+                turn=self.request.session['turn']
+            )
+        elif self.request.POST.get('restart', None):
+            self.request.session['moves'] = []
+            self.request.session['turn'] = False
+            self.reviewer.restart()
+            context = self.get_context_data(
+                self.opening, self.variation, self.reviewer.board, self.reviewer.possible_moves,
+                turn=self.request.session['turn']
             )
         else:
             for move in self.reviewer.possible_moves:
                 if self.request.POST.get(move, None):
                     self.reviewer.next_move(move)
                     self.request.session['moves'].append(move)
+                    self.request.session['turn'] = not self.request.session['turn']
                     context = self.get_context_data(
-                        self.opening, self.variation, self.reviewer.board, self.reviewer.possible_moves
+                        self.opening, self.variation, self.reviewer.board, self.reviewer.possible_moves,
+                        turn=self.request.session['turn']
                     )
         return render(self.request, self.template_name, context)
 

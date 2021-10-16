@@ -5,28 +5,39 @@
 {% block content %}
 <div class="container mt-3 mx-auto" style="max-width: 850px;">
 	<h4 class="text-center" style="color: #F5F3F4;">Reviewing {{ variation.name }} from {{ opening.name }}</h4>
-	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 610px;">
+	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 620px;">
 		<div class="container pt-3 pb-1 text-center rounded">
 			{{ board }}
 		</div>
 		<form method="POST">
 			{% csrf_token %}
-			<div class="container text-center" style="max-width: 500px;">
+			<div class="container text-center" style="max-width: 650px;">
 				<div class="form-row">
-					<div class="row py-1">
+					<div class="row px-2 py-1">
 						{% for move in all_moves %}
-							<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-light mx-2" style="width: 75px; background-color: #6D6875;" role="button">{{ move }}</button>
+							<div class="col text-center">
+								{% if not turn %}
+									<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-dark mx-2" style="width: 100px; background-color: #F5F3F4;" role="button"><strong>{{ move }}</strong></button>
+								{% else %}
+									<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-light mx-2" style="width: 100px; background-color: #161A1D;" role="button"><strong>{{ move }}</strong></button>
+								{% endif %}
+							</div>
 						{% endfor %}
 					</div>
-					<div class="row">
-						<button type="submit" value="undo" name="undo" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Undo Move</button>
+					<div class="row px-3 py-1">
+						<div class="col text-center" style="position: relative; left: 50px;">
+							<button type="submit" value="undo" name="undo" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Undo Move</button>
+						</div>
+						<div class="col text-center" style="position: relative; left: -50px;">
+							<button type="submit" value="restart" name="restart" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Restart</button>
+						</div>
 					</div>
 				</div>
 			</div>
 		</form>
 	</div>
 	<div class="text-center">
-		<a href="{% url 'repertoire:opening_variations' opening.name %}" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">Back</a>
+		<a href="{% url 'repertoire:opening_variations' opening.name %}" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">Check other Variations</a>
 	</div>
 </div>
 {% endblock %}
