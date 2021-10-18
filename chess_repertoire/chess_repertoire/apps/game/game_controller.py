@@ -1,14 +1,15 @@
 import chess.pgn as pgn
 import chess.svg as svg
 
+from chess_repertoire.apps.repertoire.constants import CHESS_BOARD_SIZE
+
 class ChessReviewer():
-    def __init__(self, pgn_file, color, run_moves=[], size=500, turn=False):
-        self.pgn_path = pgn_file
+    def __init__(self, pgn_file, color, run_moves=[], size=CHESS_BOARD_SIZE):
         self.state = ChessReviewer.read_pgn_file(pgn_file)
-        self.size = size
         self.flipped = True if color else False
-        self.turn = turn  # False is White, Black is True
         self.run_visited_moves(run_moves)
+        self.pgn_path = pgn_file
+        self.size = size
 
     @staticmethod
     def read_pgn_file(pgn_file):
@@ -23,9 +24,7 @@ class ChessReviewer():
     
     @property
     def possible_moves(self):
-        uci_moves = [
-            self.state.variations[x].move for x in range(len(self.state.variations))
-        ]
+        uci_moves = [self.state.variations[x].move for x in range(len(self.state.variations))]
         self.moves = []
         for move in uci_moves:
             self.moves.append(self.state.board().san(move))
@@ -39,12 +38,13 @@ class ChessReviewer():
         self.possible_moves
         index = self.moves.index(move)
         self.state = self.state.variations[index]
-        self.turn = not self.turn
         
     def undo_move(self):
         self.state = self.state.parent
-        self.turn = not self.turn
 
     def restart(self):
         self.state = ChessReviewer.read_pgn_file(self.pgn_path)
-        self.turn = False
+
+class ChessPractice(ChessReviewer):
+    pass
+    

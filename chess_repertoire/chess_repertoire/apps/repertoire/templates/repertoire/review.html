@@ -17,9 +17,9 @@
 						{% for move in all_moves %}
 							<div class="col text-center">
 								{% if not turn %}
-									<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-dark mx-2" style="width: 100px; background-color: #F5F3F4;" role="button"><strong>{{ move }}</strong></button>
+									<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-dark mx-2" style="width: 85px; background-color: #F5F3F4;" role="button"><strong>{{ move }}</strong></button>
 								{% else %}
-									<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-light mx-2" style="width: 100px; background-color: #161A1D;" role="button"><strong>{{ move }}</strong></button>
+									<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-light mx-2" style="width: 85px; background-color: #161A1D;" role="button"><strong>{{ move }}</strong></button>
 								{% endif %}
 							</div>
 						{% endfor %}

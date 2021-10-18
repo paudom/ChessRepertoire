@@ -130,6 +130,7 @@ class Variation(models.Model):
 
     class Meta:
         ordering = ['-on_turn', 'name']
+        unique_together = ['name', 'on_turn']
     
     def get_absolute_url(self):
         return reverse('repertoire:opening_variations', kwargs={'pk': self.opening.name})
