@@ -11,20 +11,31 @@
 		</div>
 		<form method="POST">
 			{% csrf_token %}
-			<div class="container text-center" style="max-width: 250px;">
+			<div class="container text-center" style="max-width: 400px;">
 				<div class="form-row">
-					<div class="row px-2 py-2">
-						<input class="form-control" type="text" name="move" placeholder="Enter a Move">
-					</div>
-					<div class="row px-2 py-2">
+					<div class="row px-2 py-1">
 						<div class="col">
+							<input class="form-control" type="text" name="move" placeholder="Enter a Move">
+						</div>
+						<div class="col pt-1">
 							{% if correct == True %}
-								<span class="badge text-dark" style="background-color: #90B36D; width: 125px;">CORRECT</span>
+								<div class="container rounded text-center" style="background-color: #90B36D; width: 150px; height: 30px">
+									<h6 class="pt-1 text-light"><strong>CORRECT</strong></h6>
+								</div>
 							{% elif correct == False %}
-								<span class="badge text-dark" style="background-color: #E24E51; width: 125px;">INCORRECT</span>
+								<div class="container rounded text-center" style="background-color: #E24E51; width: 150px; height: 30px">
+									<h6 class="pt-1 text-light"><strong>INCORRECT</strong></h6>
+								</div>
 							{% else %}
-								<span class="badge text-dark" style="background-color: #DDB892; width: 125px;"></span>
+								<div class="container rounded text-center" style="background-color: #DDB892; width: 150px; height: 30px">
+									<h6 class="pt-1 text-dark"><strong>FIRST MOVE</strong></h6>
+								</div>
 							{% endif %}
+						</div>
+					</div>
+					<div class="row px-2 py-1">
+						<div class="col text-center">
+							<button type="submit" name="restart" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Restart</button>
 						</div>
 					</div>
 				</div>

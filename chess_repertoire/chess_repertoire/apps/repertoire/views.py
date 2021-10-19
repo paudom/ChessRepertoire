@@ -183,6 +183,10 @@ class PracticeVariation(View):
             self.variation.opening.color,
             run_moves=self.request.session['moves']
         )
+        # -- Set the First Move -- #
+        if self.practice.color and not self.request.session['moves']:
+            self.request.session['moves'].append(self.practice.first_move)
+            self.practice.first_move = None
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -190,10 +194,21 @@ class PracticeVariation(View):
         return render(self.request, self.template_name, context)
     
     def post(self, request, *args, **kwargs):
-        move = self.request.GET.get('move', None)
-        m = self.request.POST.get('move', None)
-        print(move)
-        print(m)
-        print(self.request.POST, self.request.GET)
-        context = self.get_context_data()
+        # -- Restart Practicing -- #
+        print(self.request.POST.get('restart', None))
+        if self.request.POST.get('restart', None):
+            self.request.session['moves'] = []
+            correct = -1
+        # -- Check if Move is correct -- #
+        else:
+            move = self.request.POST.get('move', None)
+            print(move)
+            correct = True if move in self.practice.possible_moves else False
+            print(correct)
+            if correct:
+                opp_move = self.practice.next_move(move)
+                print(opp_move)
+                self.request.session['moves'] += [move, opp_move]
+                print(self.request.session['moves'])
+        context = self.get_context_data(correct=correct)
         return render(self.request, self.template_name, context)
