@@ -181,12 +181,11 @@ class PracticeVariation(View):
         self.practice = ChessPractice(
             self.variation.pgn_file.path,
             self.variation.opening.color,
-            run_moves=self.request.session['moves']
         )
-        # -- Set the First Move -- #
-        if self.practice.color and not self.request.session['moves']:
-            self.request.session['moves'].append(self.practice.first_move)
-            self.practice.first_move = None
+        self.request.session['moves'] = self.practice.run_visited_moves(
+            self.request.session['moves']
+        )
+        
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -194,21 +193,19 @@ class PracticeVariation(View):
         return render(self.request, self.template_name, context)
     
     def post(self, request, *args, **kwargs):
-        # -- Restart Practicing -- #
-        print(self.request.POST.get('restart', None))
-        if self.request.POST.get('restart', None):
-            self.request.session['moves'] = []
-            correct = -1
-        # -- Check if Move is correct -- #
-        else:
-            move = self.request.POST.get('move', None)
-            print(move)
-            correct = True if move in self.practice.possible_moves else False
-            print(correct)
-            if correct:
-                opp_move = self.practice.next_move(move)
-                print(opp_move)
+        # -- Check if Player entered a Move -- #
+        move = self.request.POST.get('move', None)
+        if move != '':
+            # -- Move was entered -- #
+            if self.practice.check_if_correct(move):
+                correct = True
+                opp_move = self.practice.player_move(move)
                 self.request.session['moves'] += [move, opp_move]
-                print(self.request.session['moves'])
+            else:
+                correct = False
+        else:
+            # -- Practice Again the Game -- #
+            self.request.session['moves'] = self.practice.restart()
+            correct = -1
         context = self.get_context_data(correct=correct)
         return render(self.request, self.template_name, context)
