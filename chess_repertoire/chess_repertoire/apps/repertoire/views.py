@@ -130,8 +130,9 @@ class ReviewVariation(View):
         self.reviewer = ChessReviewer(
             self.variation.pgn_file.path,
             self.variation.opening.color,
-            run_moves=self.request.session['moves']
         )
+        self.reviewer.run_visited_moves(self.request.session['moves'])
+        
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
