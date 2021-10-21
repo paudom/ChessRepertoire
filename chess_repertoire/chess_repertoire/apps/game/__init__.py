@@ -1,1 +1,1 @@
-from .game_controller import ChessReviewer
+from .game_controller import ChessReviewer, ChessPractice

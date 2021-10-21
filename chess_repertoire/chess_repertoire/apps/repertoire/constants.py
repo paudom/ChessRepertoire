@@ -1,5 +1,5 @@
 # -- CONSTANTS -- #
-CHESS_BOARD_SIZE = 400
+CHESS_BOARD_SIZE = 500
 
 # -- View constants -- #
 MAX_OPENING_PER_PAGE = 4

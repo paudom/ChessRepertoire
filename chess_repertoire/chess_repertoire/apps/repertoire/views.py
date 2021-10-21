@@ -4,7 +4,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 
-from chess_repertoire.apps.game import ChessReviewer
+from chess_repertoire.apps.game import ChessReviewer, ChessPractice
 from .constants import MAX_OPENING_PER_PAGE, MAX_VARIATION_PER_PAGE
 from .models import Opening, Variation
 from .forms import OpeningForm, VariationForm
@@ -113,13 +113,13 @@ class ModifyVariation(UpdateView):
 class ReviewVariation(View):
     template_name = 'repertoire/review.html'
 
-    def get_context_data(self, opening, variation, board, moves, **kwargs):
+    def get_context_data(self):
         return {
-            'opening': opening,
-            'variation': variation,
-            'board': mark_safe(board),
-            'all_moves': moves,
-            **kwargs
+            'opening': self.opening,
+            'variation': self.variation,
+            'board': mark_safe(self.reviewer.board),
+            'all_moves': self.reviewer.possible_moves,
+            'turn': self.request.session['turn']
         }
 
     def dispatch(self, request, *args, **kwargs):
@@ -130,55 +130,83 @@ class ReviewVariation(View):
         self.reviewer = ChessReviewer(
             self.variation.pgn_file.path,
             self.variation.opening.color,
-            run_moves=self.request.session['moves'],
-            turn=self.request.session['turn']
         )
+        self.reviewer.run_visited_moves(self.request.session['moves'])
+        
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data(
-            self.opening, self.variation, self.reviewer.board, self.reviewer.possible_moves,
-            turn=self.request.session['turn']
-        )
+        context = self.get_context_data()
         return render(self.request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
+        # -- Undo Move -- #
         if self.request.POST.get('undo', None):
             self.reviewer.undo_move()
             self.request.session['moves'].pop()
             self.request.session['turn'] = not self.request.session['turn']
-            context = self.get_context_data(
-                self.opening, self.variation, self.reviewer.board, self.reviewer.possible_moves,
-                turn=self.request.session['turn']
-            )
+            context = self.get_context_data()
+        # -- Restart Reviewing -- #
         elif self.request.POST.get('restart', None):
             self.request.session['moves'] = []
             self.request.session['turn'] = False
             self.reviewer.restart()
-            context = self.get_context_data(
-                self.opening, self.variation, self.reviewer.board, self.reviewer.possible_moves,
-                turn=self.request.session['turn']
-            )
+            context = self.get_context_data()
+        # -- Execute Move -- #
         else:
             for move in self.reviewer.possible_moves:
                 if self.request.POST.get(move, None):
                     self.reviewer.next_move(move)
                     self.request.session['moves'].append(move)
                     self.request.session['turn'] = not self.request.session['turn']
-                    context = self.get_context_data(
-                        self.opening, self.variation, self.reviewer.board, self.reviewer.possible_moves,
-                        turn=self.request.session['turn']
-                    )
+                    context = self.get_context_data()
         return render(self.request, self.template_name, context)
 
 
-class PracticeVariation(DetailView):
-    model = Variation
+class PracticeVariation(View):
     template_name = 'repertoire/practice.html'
-    context_object_name = 'variation'
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['opening'] = Opening.objects.get(pk=self.kwargs['opening_name'])
-        context['variation'] = Variation.objects.get(pk=self.kwargs['pk'])
-        return context
+    def get_context_data(self, correct=-1):
+        return {
+            'opening': self.opening,
+            'variation': self.variation,
+            'board': mark_safe(self.practice.board),
+            'correct': correct
+        }
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.opening = Opening.objects.get(pk=self.kwargs['opening_name'])
+        self.variation = Variation.objects.get(pk=self.kwargs['pk'])
+
+        # -- Initialize Reviewer -- #
+        self.practice = ChessPractice(
+            self.variation.pgn_file.path,
+            self.variation.opening.color,
+        )
+        self.request.session['moves'] = self.practice.run_visited_moves(
+            self.request.session['moves']
+        )
+        
+        return super().dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data()
+        return render(self.request, self.template_name, context)
+    
+    def post(self, request, *args, **kwargs):
+        # -- Check if Player entered a Move -- #
+        move = self.request.POST.get('move', None)
+        if move != '':
+            # -- Move was entered -- #
+            if self.practice.check_if_correct(move):
+                correct = True
+                opp_move = self.practice.player_move(move)
+                self.request.session['moves'] += [move, opp_move]
+            else:
+                correct = False
+        else:
+            # -- Practice Again the Game -- #
+            self.request.session['moves'] = self.practice.restart()
+            correct = -1
+        context = self.get_context_data(correct=correct)
+        return render(self.request, self.template_name, context)

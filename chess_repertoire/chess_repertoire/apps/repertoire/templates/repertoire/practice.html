@@ -1,14 +1,47 @@
-{% extends 'layouts/base.html' %}
+{% extends 'layouts/base_without_navbar.html' %}
 
 {% block title %}Practice {{ variation.name }}{% endblock %}
 
 {% block content %}
 <div class="container mt-3 mx-auto" style="max-width: 850px;">
-	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 625px;">
-		{{ board }}
+	<h4 class="text-center" style="color: #F5F3F4;">Practicing {{ variation.name }} from {{ opening.name }}</h4>
+	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 620px;">
+		<div class="container pt-3 pb-1 text-center rounded">
+			{{ board }}
+		</div>
+		<form method="POST">
+			{% csrf_token %}
+			<div class="container text-center" style="max-width: 400px;">
+				<div class="form-row">
+					<div class="row px-2 py-1">
+						<div class="col">
+							<input class="form-control" type="text" name="move" placeholder="Enter a Move">
+						</div>
+						{% if correct == True %}
+							<div class="col pt-1">
+								<div class="container rounded text-center" style="background-color: #90B36D; width: 150px; height: 30px">
+									<h6 class="pt-1 text-light"><strong>CORRECT</strong></h6>
+								</div>
+							</div>
+						{% elif correct == False %}
+							<div class="col pt-1">
+								<div class="container rounded text-center" style="background-color: #E24E51; width: 150px; height: 30px">
+									<h6 class="pt-1 text-light"><strong>INCORRECT</strong></h6>
+								</div>
+							</div>
+						{% endif %}
+					</div>
+					<div class="row px-2 py-1">
+						<div class="col text-center">
+							<button type="submit" value="restart" name="restart" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Restart</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
 	</div>
 	<div class="text-center">
-		<a href="{% url 'repertoire:opening_variations' opening.name %}" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">Back</a>
+		<a href="{% url 'repertoire:opening_variations' opening.name %}" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">Check other Variations</a>
 	</div>
 </div>
 {% endblock %}
