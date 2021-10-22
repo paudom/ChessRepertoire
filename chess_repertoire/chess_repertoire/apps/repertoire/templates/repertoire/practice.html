@@ -14,20 +14,33 @@
 			<div class="container text-center" style="max-width: 400px;">
 				<div class="form-row">
 					<div class="row px-2 py-1">
-						<div class="col">
-							<input class="form-control" type="text" name="move" placeholder="Enter a Move">
-						</div>
 						{% if correct == True %}
+							<div class="col">
+								<input class="form-control" type="text" name="move" placeholder="Enter a Move">
+							</div>
 							<div class="col pt-1">
 								<div class="container rounded text-center" style="background-color: #90B36D; width: 150px; height: 30px">
 									<h6 class="pt-1 text-light"><strong>CORRECT</strong></h6>
 								</div>
 							</div>
 						{% elif correct == False %}
+							<div class="col">
+								<input class="form-control" type="text" name="move" placeholder="Enter a Move">
+							</div>
 							<div class="col pt-1">
 								<div class="container rounded text-center" style="background-color: #E24E51; width: 150px; height: 30px">
 									<h6 class="pt-1 text-light"><strong>INCORRECT</strong></h6>
 								</div>
+							</div>
+						{% elif correct == 'Finished' %}
+							<div class="col pt-1">
+								<div class="container rounded text-center" style="background-color: #7F5539; width: 150px; height: 30px">
+									<h6 class="pt-1 text-light"><strong>FINISHED</strong></h6>
+								</div>
+							</div>
+						{% else %}
+							<div class="col">
+								<input class="form-control" type="text" name="move" placeholder="Enter a Move">
 							</div>
 						{% endif %}
 					</div>

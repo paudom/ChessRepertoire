@@ -195,13 +195,16 @@ class PracticeVariation(View):
     
     def post(self, request, *args, **kwargs):
         # -- Check if Player entered a Move -- #
-        move = self.request.POST.get('move', None)
+        move = self.request.POST.get('move', '')
         if move != '':
             # -- Move was entered -- #
             if self.practice.check_if_correct(move):
                 correct = True
-                opp_move = self.practice.player_move(move)
-                self.request.session['moves'] += [move, opp_move]
+                try:
+                    opp_move = self.practice.player_move(move)
+                    self.request.session['moves'] += [move, opp_move]
+                except Exception:
+                    correct = 'Finished'
             else:
                 correct = False
         else:
