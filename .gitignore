@@ -135,6 +135,7 @@ dmypy.json
 media
 staticfiles
 .vscode
+*.sh
 
 # Error Handling
 .flake8
