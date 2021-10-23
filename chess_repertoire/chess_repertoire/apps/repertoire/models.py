@@ -4,6 +4,8 @@ from django.conf import settings
 from django.db import models
 from django.urls import reverse
 
+from autoslug import AutoSlugField
+
 from . import constants
 
 
@@ -63,7 +65,8 @@ class Opening(models.Model):
         SYSTEM = "SY", "SYSTEM"
         GAMBIT = "GB", "GAMBIT"
     
-    name = models.CharField(max_length=constants.MAX_LENGTH, primary_key=True)
+    name = models.CharField(max_length=constants.MAX_LENGTH, unique=True)
+    slug = AutoSlugField(populate_from='name')
     description = models.TextField(max_length=constants.OPENING_MAX_LENGTH, default='')
     color = models.IntegerField(blank=False, choices=Color.choices)
     difficulty = models.CharField(
@@ -83,7 +86,7 @@ class Opening(models.Model):
         ordering = ['name']
 
     def get_absolute_url(self):
-        return reverse('repertoire:opening_detail', kwargs={'pk': self.name})
+        return reverse('repertoire:opening_detail', kwargs={'slug': self.slug})
 
     def __str__(self) -> str:
         return f'{self.name} {self.__class__.__name__} for {"Black" if self.color else "White"}'
@@ -113,7 +116,8 @@ class Variation(models.Model):
         SHARP = "SHP", "SHARP"
         ADVANTAGEOUS = "ADV", "ADVANTAGEOUS"
 
-    name = models.CharField(max_length=constants.MAX_LENGTH, primary_key=True)
+    name = models.CharField(max_length=constants.MAX_LENGTH, unique=True)
+    slug = AutoSlugField(populate_from='name')
     description = models.TextField(max_length=constants.VARIATION_MAX_LENGTH)
     on_turn = models.PositiveIntegerField()
     nature = models.CharField(
@@ -133,7 +137,7 @@ class Variation(models.Model):
         unique_together = ['name', 'on_turn']
     
     def get_absolute_url(self):
-        return reverse('repertoire:opening_variations', kwargs={'pk': self.opening.name})
+        return reverse('repertoire:opening_variations', kwargs={'slug': self.opening.slug})
 
     def __str__(self) -> str:
         return f'{self.name} {self.__class__.__name__} from {self.opening.name}'

@@ -1,10 +1,10 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %}Modify Variation{% endblock %}
+{% block title %}Modify {{ form.name }}{% endblock %}
 
 {% block content %}
 <div class="container mt-4 mx-auto" style="max-width: 850px;">
-	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 700px;">
+	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 705px;">
 		<form method="POST" enctype="multipart/form-data">
 			{% csrf_token %}
 			<div class="form-row py-3" style="padding-left: 80px; padding-right: 80px;">
@@ -59,7 +59,7 @@
 						<button type="submit" class="btn text-light" style="width: 250px; background-color: #6D6875;" role="button">Submit</button>
 					</div>
 					<div class="col">
-						<a href="{% url 'repertoire:opening_variations' opening.name %}" class="btn text-light" style="width: 250px; background-color: #6D6875;" role="button">Cancel</a>
+						<a href="{% url 'repertoire:opening_variations' opening.slug %}" class="btn text-light" style="width: 250px; background-color: #6D6875;" role="button">Cancel</a>
 					</div>
 				</div>
 			</div>

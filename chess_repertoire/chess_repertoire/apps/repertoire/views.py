@@ -8,7 +8,7 @@ from chess_repertoire.apps.game import ChessReviewer, ChessPractice
 from .constants import MAX_OPENING_PER_PAGE, MAX_VARIATION_PER_PAGE
 from .models import Opening, Variation
 from .forms import OpeningForm, VariationForm
-from .filters import OpeningFilter
+from .filters import OpeningFilter, VariationFilter
 
 # -- General Views -- #
 class AboutPage(TemplateView):
@@ -51,7 +51,7 @@ class ModifyOpening(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['opening'] = Opening.objects.get(pk=self.kwargs['pk'])
+        context['opening'] = Opening.objects.get(slug=self.kwargs['slug'])
         return context
 
 
@@ -72,13 +72,19 @@ class OpeningVariations(ListView):
         return super().dispatch(self.request, *args, **kwargs)
 
     def get_queryset(self, **kwargs):
-        opening = Opening.objects.get(pk=self.kwargs['pk'])
+        opening = Opening.objects.get(slug=self.kwargs['slug'])
         variations = opening.variation_set.all()
         return variations
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['opening'] = Opening.objects.get(pk=self.kwargs['pk'])
+        context['opening'] = Opening.objects.get(slug=self.kwargs['slug'])
+        context['filter'] = VariationFilter(self.request.GET, queryset=self.get_queryset())
+        # -- Pagination with Filtering -- #
+        paginator = Paginator(context['filter'].qs, OpeningVariations.paginate_by)
+        page_number = self.request.GET.get('page')
+        variations = paginator.get_page(page_number)
+        context['variations'] = variations
         return context
 
 
@@ -89,11 +95,11 @@ class NewVariation(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['opening'] = Opening.objects.get(pk=self.kwargs['pk'])
+        context['opening'] = Opening.objects.get(slug=self.kwargs['slug'])
         return context
 
     def form_valid(self, form):
-        form.instance.opening = Opening.objects.get(pk=self.kwargs['pk'])
+        form.instance.opening = Opening.objects.get(slug=self.kwargs['slug'])
         return super().form_valid(form)
 
 
@@ -104,8 +110,8 @@ class ModifyVariation(UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['opening'] = Opening.objects.get(pk=self.kwargs['opening_name'])
-        context['variation'] = Variation.objects.get(pk=self.kwargs['pk'])
+        context['opening'] = Opening.objects.get(name=self.kwargs['opn'])
+        context['variation'] = Variation.objects.get(slug=self.kwargs['slug'])
         return context
 
 
@@ -123,8 +129,8 @@ class ReviewVariation(View):
         }
 
     def dispatch(self, request, *args, **kwargs):
-        self.opening = Opening.objects.get(pk=self.kwargs['opening_name'])
-        self.variation = Variation.objects.get(pk=self.kwargs['pk'])
+        self.opening = Opening.objects.get(name=self.kwargs['opn'])
+        self.variation = Variation.objects.get(slug=self.kwargs['slug'])
 
         # -- Initialize Reviewer -- #
         self.reviewer = ChessReviewer(
@@ -175,8 +181,8 @@ class PracticeVariation(View):
         }
     
     def dispatch(self, request, *args, **kwargs):
-        self.opening = Opening.objects.get(pk=self.kwargs['opening_name'])
-        self.variation = Variation.objects.get(pk=self.kwargs['pk'])
+        self.opening = Opening.objects.get(name=self.kwargs['opn'])
+        self.variation = Variation.objects.get(slug=self.kwargs['slug'])
 
         # -- Initialize Reviewer -- #
         self.practice = ChessPractice(

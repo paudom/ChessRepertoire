@@ -1,9 +1,44 @@
 {% extends 'layouts/base.html' %}
 
-{% block title %}Variations from {{ opening.name }}{% endblock %}
+{% block title %}{{ opening.name }} Variations{% endblock %}
 
 {% block content %}
 
+{% load custom_tags %}
+
+<!-- Filter for Openings -->
+<div class="container mx-auto px-0" style="max-width: 950px;">
+	<div class="container mt-4 px-0 rounded" style="background-color:#DDB892; height: 55px;">
+		<form method="GET">
+			<div class="form-row pt-2 px-2">
+				<div class="row">
+					<div class="col pt-2" style="padding-left: 5px; padding-right: 5px;">
+						<p class="fw-bold text-center">Name:</p>
+					</div>
+					<div class="col pt-2" style="position: relative; left:-30px; padding-left: 5px; padding-right: 5px;">
+						{{ filter.form.name }}
+					</div>
+					<div class="col pt-2" style="position: relative; left:--15px; padding-left: 5px; padding-right: 5px;">
+						<p class="fw-bold">On Turn:</p>
+					</div>
+					<div class="col pt-2" style="position: relative; left:-40px; padding-left: 5px; padding-right: 5px;">
+						{{ filter.form.on_turn }}
+					</div>
+					<div class="col pt-2" style="position: relative; left: 5px; padding-left: 5px; padding-right: 5px;">
+						<p class="fw-bold">Nature:</p>
+					</div>
+					<div class="col pt-2" style="position: relative; left: -30px; padding-left: 5px; padding-right: 5px;">
+						{{ filter.form.nature }}
+					</div>
+					<div class="col">
+						<button type="submit" class="btn text-light" style="width: 80px; position: relative; left:-10px; background-color: #6D6875;" role="button">Search</button>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+<!--Displaying all Variations-->
 <div class="container mt-3 mx-auto" style="max-width: 850px;">
 	<h3 class="text-center" style="color: #F5F3F4;">Variations from {{ opening.name }}</h3>
 	{% for variation in variations %}
@@ -63,13 +98,13 @@
 					</div>
 					<div class="row my-2 px-2 py-4" style="height: 30px;">
 						<div class="col text-center">
-							<a href="{% url 'repertoire:practice' opening.name variation.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Practice</a>
+							<a href="{% url 'repertoire:practice' opening.name variation.slug %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Practice</a>
 						</div>
 						<div class="col text-center">
-							<a href="{% url 'repertoire:review' opening.name variation.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Review</a>
+							<a href="{% url 'repertoire:review' opening.name variation.slug %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Review</a>
 						</div>
 						<div class="col text-center">
-							<a href="{% url 'repertoire:modify_variation' opening.name variation.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Modify</a>
+							<a href="{% url 'repertoire:modify_variation' opening.name variation.slug %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Modify</a>
 						</div>
 					</div>
 				</div>
@@ -77,27 +112,27 @@
 		</div>
 	{% endfor %}
 	<div class="text-center pt-1">
-		<a href="{% url 'repertoire:new_variation' opening.name %}" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">New Variation</a>
+		<a href="{% url 'repertoire:new_variation' opening.slug %}" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">New Variation</a>
 	</div>
 
 	<!-- Pagination -->
 	<div class="pt-3 text-center">
 		{% if is_paginated %}
 
-			{% if page_obj.has_previous %}
-				<a class="btn text-light" href="?page=1" style="width: 100px; background-color: #6D6875;">First</a>
+			{% if variations.has_previous %}
+				<a class="btn text-light" href="{% custom_url 1 'page' request.GET.urlencode %}" style="width: 100px; background-color: #6D6875;">First</a>
 			{% endif %}
 
-			{% for num in page_obj.paginator.page_range %}
-				{% if page_obj.number == num %}
-					<a class="btn text-light" href="?page={{ num }}" style="width: 100px; background-color: #8F8B94;">{{ num }}</a>
-				{% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3'%}
-					<a class="btn text-light" href="?page={{ num }}" style="width: 100px; background-color: #6D6875;">{{ num }}</a>
+			{% for num in variations.paginator.page_range %}
+				{% if variations.number == num %}
+					<a class="btn text-light" href="{% custom_url num 'page' request.GET.urlencode %}" style="width: 100px; background-color: #8F8B94;">{{ num }}</a>
+				{% elif num > variations.number|add:'-3' and num < variations.number|add:'3'%}
+					<a class="btn text-light" href="{% custom_url num 'page' request.GET.urlencode %}" style="width: 100px; background-color: #6D6875;">{{ num }}</a>
 				{% endif %}
 			{% endfor %}
 
-			{% if page_obj.has_next %}
-				<a class="btn text-light" href="?page={{ page_obj.paginator.num_pages }}" style="width: 100px; background-color: #6D6875;">Last</a>
+			{% if variations.has_next %}
+				<a class="btn text-light" href="{% custom_url variations.paginator.num_pages 'page' request.GET.urlencode %}" style="width: 100px; background-color: #6D6875;">Last</a>
 			{% endif %}
 
 		{% endif %}

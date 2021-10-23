@@ -17,7 +17,7 @@
 				<p class="fw-light fst-italic" style="max-height: 100px; text-align: justify;">{{ opening.description }}</p>
 			</div>
 		</div>
-		<div class="row py-1" style="position: relative; top:60px">
+		<div class="row py-1" style="position: relative; top:65px">
 			<div class="col">
 				<h6 class="text-center fw-bolder" style="justify-content: center">Difficulty</h6>
 			</div>
@@ -28,7 +28,7 @@
 				<h6 class="text-center fw-bolder" style="justify-content: center">Color</h6>
 			</div>
 		</div>
-		<div class="row py-1" style="position: relative; top: 55px;">
+		<div class="row py-1" style="position: relative; top: 60px;">
 			<div class="col">
 				<h5 class="text-center" style="justify-content: center;">
 					{% if opening.difficulty == 'B' %}
@@ -63,7 +63,7 @@
 				</h5>
 			</div>
 		</div>
-		<div class="row" style="position: relative; top:45px; left:40px">
+		<div class="row" style="position: relative; top:50px; left:40px">
 			<div class="col">
 				{% if opening.difficulty == 'B' %}
 					{% if not opening.color %}
@@ -122,10 +122,10 @@
 		</div>
 		<div class="row" style="position: relative; top:60px;">
 			<div class="col text-center">
-				<a href="{% url 'repertoire:opening_variations' opening.name %}" class="btn text-light" style="width: 175px; background-color: #9C6644;" role="button">Variations</a>
+				<a href="{% url 'repertoire:opening_variations' opening.slug %}" class="btn text-light" style="width: 175px; background-color: #9C6644;" role="button">Variations</a>
 			</div>
 			<div class="col text-center">
-				<a href="{% url 'repertoire:modify_opening' opening.name %}" class="btn text-light" style="width: 175px; background-color: #9C6644;" role="button">Modify</a>
+				<a href="{% url 'repertoire:modify_opening' opening.slug %}" class="btn text-light" style="width: 175px; background-color: #9C6644;" role="button">Modify</a>
 			</div>
 		</div>
 	</div>

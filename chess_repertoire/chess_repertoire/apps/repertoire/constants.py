@@ -3,7 +3,7 @@ CHESS_BOARD_SIZE = 500
 
 # -- View constants -- #
 MAX_OPENING_PER_PAGE = 4
-MAX_VARIATION_PER_PAGE = 10
+MAX_VARIATION_PER_PAGE = 4
 
 # -- Lengths -- #
 MAX_LENGTH = 50

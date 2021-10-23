@@ -110,13 +110,13 @@
 					</div>
 					<div class="row my-2 px-2 py-4 " style="position: relative; top: 5px; height: 30px;">
 						<div class="col text-center">
-							<a href="{% url 'repertoire:opening_variations' opening.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Variations</a>
+							<a href="{% url 'repertoire:opening_variations' opening.slug %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Variations</a>
 						</div>
 						<div class="col text-center">
-							<a href="{% url 'repertoire:opening_detail' opening.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Information</a>
+							<a href="{% url 'repertoire:opening_detail' opening.slug %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Information</a>
 						</div>
 						<div class="col text-center">
-							<a href="{% url 'repertoire:modify_opening' opening.name %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Modify</a>
+							<a href="{% url 'repertoire:modify_opening' opening.slug %}" class="btn text-light" style="width: 150px; background-color: #9C6644;" role="button">Modify</a>
 						</div>
 					</div>
 				</div>
