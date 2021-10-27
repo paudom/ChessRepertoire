@@ -14,7 +14,7 @@
 			<div class="container text-center" style="max-width: 400px;">
 				<div class="form-row">
 					<div class="row px-2 py-1">
-						{% if correct == True %}
+						{% if correct == 'correct' %}
 							<div class="col">
 								<input class="form-control" type="text" name="move" placeholder="Enter a Move">
 							</div>
@@ -23,7 +23,7 @@
 									<h6 class="pt-1 text-light"><strong>CORRECT</strong></h6>
 								</div>
 							</div>
-						{% elif correct == False %}
+						{% elif correct == 'incorrect' %}
 							<div class="col">
 								<input class="form-control" type="text" name="move" placeholder="Enter a Move">
 							</div>
@@ -32,7 +32,16 @@
 									<h6 class="pt-1 text-light"><strong>INCORRECT</strong></h6>
 								</div>
 							</div>
-						{% elif correct == 'Finished' %}
+						{% elif correct == 'hint' %}
+							<div class="col">
+								<input class="form-control" type="text" name="move" placeholder="Enter a Move">
+							</div>
+							<div class="col pt-1">
+								<div class="container rounded text-center" style="background-color: #8187DC; width: 150px; height: 30px">
+									<h6 class="pt-1 text-light"><strong>HINT</strong></h6>
+								</div>
+							</div>
+						{% elif correct == 'finished' %}
 							<div class="col pt-1">
 								<div class="container rounded text-center" style="background-color: #7F5539; width: 150px; height: 30px">
 									<h6 class="pt-1 text-light"><strong>FINISHED</strong></h6>
@@ -47,6 +56,9 @@
 					<div class="row px-2 py-1">
 						<div class="col text-center">
 							<button type="submit" value="restart" name="restart" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Restart</button>
+						</div>
+						<div class="col text-center">
+							<button type="submit" value="hint" name="hint" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Show Hint</button>
 						</div>
 					</div>
 				</div>
