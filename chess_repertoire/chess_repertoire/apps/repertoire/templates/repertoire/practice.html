@@ -57,9 +57,11 @@
 						<div class="col text-center">
 							<button type="submit" value="restart" name="restart" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Restart</button>
 						</div>
-						<div class="col text-center">
-							<button type="submit" value="hint" name="hint" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Show Hint</button>
-						</div>
+						{% if correct != 'finished' %}
+							<div class="col text-center">
+								<button type="submit" value="hint" name="hint" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Show Hint</button>
+							</div>
+						{% endif %}
 					</div>
 				</div>
 			</div>
