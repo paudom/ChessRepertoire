@@ -11,6 +11,7 @@ class ChessBase():
         self.color = True if color else False
         self.pgn_path = pgn_file
         self.size = size
+        self.arrows = []
 
     @staticmethod
     def read_pgn_file(pgn_file):
@@ -20,7 +21,11 @@ class ChessBase():
     @property
     def board(self):
         return svg.board(
-            board=self.state.board(), size=self.size, flipped=self.color, lastmove=self.state.move
+            board=self.state.board(),
+            size=self.size,
+            arrows=self.arrows,
+            flipped=self.color,
+            lastmove=self.state.move
         )
     
     @property
@@ -30,6 +35,14 @@ class ChessBase():
         for move in uci_moves:
             self.moves.append(self.state.board().san(move))
         return self.moves
+    
+    @property
+    def show_hints(self):
+        uci_moves = [self.state.variations[x].move for x in range(len(self.state.variations))]
+        for move in uci_moves:
+            self.arrows.append(svg.Arrow(
+                move.from_square, move.to_square, color='blue'
+            ))
 
     def next_move(self, move):
         self.possible_moves

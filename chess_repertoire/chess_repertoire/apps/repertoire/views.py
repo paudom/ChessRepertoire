@@ -172,7 +172,7 @@ class ReviewVariation(View):
 class PracticeVariation(View):
     template_name = 'repertoire/practice.html'
 
-    def get_context_data(self, correct=-1):
+    def get_context_data(self, correct='other'):
         return {
             'opening': self.opening,
             'variation': self.variation,
@@ -205,17 +205,21 @@ class PracticeVariation(View):
         if move != '':
             # -- Move was entered -- #
             if self.practice.check_if_correct(move):
-                correct = True
+                correct = 'correct'
                 try:
                     opp_move = self.practice.player_move(move)
                     self.request.session['moves'] += [move, opp_move]
                 except Exception:
-                    correct = 'Finished'
+                    correct = 'finished'
             else:
-                correct = False
+                correct = 'incorrect'
+        # -- Show Hints of the Possible Moves -- #
+        elif self.request.POST.get('hint', None):
+            self.practice.show_hints
+            correct = 'hint'
+        # -- Practice Again the Game -- #
         else:
-            # -- Practice Again the Game -- #
             self.request.session['moves'] = self.practice.restart()
-            correct = -1
+            correct = 'other'
         context = self.get_context_data(correct=correct)
         return render(self.request, self.template_name, context)
