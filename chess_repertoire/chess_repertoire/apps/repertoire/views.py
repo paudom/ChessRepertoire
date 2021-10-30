@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.utils.safestring import mark_safe
 
 from chess_repertoire.apps.game import ChessReviewer, ChessPractice
-from .constants import MAX_OPENING_PER_PAGE, MAX_VARIATION_PER_PAGE
+from .constants import MAX_OPENING_PER_PAGE, MAX_VARIATION_PER_PAGE, REPERTOIRE_ROOT
 from .models import Opening, Variation
 from .forms import OpeningForm, VariationForm
 from .filters import OpeningFilter, VariationFilter
@@ -108,10 +108,17 @@ class ModifyVariation(UpdateView):
     form_class = VariationForm
     template_name = 'repertoire/variation_modify_form.html'
 
+    def read_pgn_file(self, variation):
+        with open(REPERTOIRE_ROOT + variation.pgn_file.url, 'r') as file:
+            lines = file.readlines()
+            print(lines)
+        return lines
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['opening'] = Opening.objects.get(name=self.kwargs['opn'])
         context['variation'] = Variation.objects.get(slug=self.kwargs['slug'])
+        context['pgn_content'] = self.read_pgn_file(context['variation'])
         return context
 
 

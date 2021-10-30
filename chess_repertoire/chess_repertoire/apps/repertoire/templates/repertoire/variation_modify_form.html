@@ -45,11 +45,13 @@
 							{{ form.image_file }}
 						</div>
 					</div>
-					<div class="col" style="position: relative; top: 10px;">
-						<h6>PGN File (Current: {{ variation.pgn_file.url }}):</h6>
-						<div class="form-group">
-							{{ form.pgn_file }}
-						</div>
+				</div>
+			</div>
+			<div class="form-row py-2" style="padding-left: 80px; padding-right: 80px;">
+				<div class="form-group">
+					<h5>PGN Contents</h5>
+					<div class="form-control">
+						{{ pgn_content }}
 					</div>
 				</div>
 			</div>
