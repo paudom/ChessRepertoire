@@ -1,5 +1,6 @@
 # -- CONSTANTS -- #
 CHESS_BOARD_SIZE = 500
+REPERTOIRE_ROOT = 'chess_repertoire'
 
 # -- View constants -- #
 MAX_OPENING_PER_PAGE = 4
