@@ -4,9 +4,10 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 
-from chess_repertoire.apps.game import ChessReviewer, ChessPractice
+from chess_repertoire.apps.game import (
+    ChessReviewer, ChessPractice, get_current_turn, read_pgn_file, update_pgn_file
+)
 from .constants import MAX_OPENING_PER_PAGE, MAX_VARIATION_PER_PAGE
-from .utils import read_pgn_file, update_pgn_file
 from .models import Opening, Variation
 from .forms import OpeningForm, VariationForm
 from .filters import OpeningFilter, VariationFilter
@@ -69,9 +70,7 @@ class OpeningVariations(ListView):
         if not self.request.session.get('moves', None):
             self.request.session['moves'] = []
         if not self.request.session.get('turn', None):
-            self.request.session['turn'] = False
-        if not self.request.session.get('finished', None):
-            self.request.session['finished'] = False
+            self.request.session['turn'] = get_current_turn(self.request.session['moves'])
         return super().dispatch(self.request, *args, **kwargs)
 
     def get_queryset(self, **kwargs):
@@ -139,7 +138,7 @@ class ReviewVariation(View):
             'variation': self.variation,
             'board': mark_safe(self.reviewer.board),
             'all_moves': self.reviewer.possible_moves,
-            'turn': self.request.session['turn']
+            'turn': get_current_turn(self.request.session['moves'])
         }
 
     def dispatch(self, request, *args, **kwargs):
@@ -152,13 +151,6 @@ class ReviewVariation(View):
             self.opening.color,
         )
         self.reviewer.run_visited_moves(self.request.session['moves'])
-
-        # -- Check if Finished from Practice -- #
-        if self.request.session['finished']:
-            self.reviewer.restart()
-            self.request.session['moves'] = []
-            self.request.session['finished'] = False
-            self.request.session['turn'] = True if self.opening.color else False
         
         return super().dispatch(request, *args, **kwargs)
 
@@ -171,12 +163,10 @@ class ReviewVariation(View):
         if self.request.POST.get('undo', None):
             self.reviewer.undo_move()
             self.request.session['moves'].pop()
-            self.request.session['turn'] = not self.request.session['turn']
             context = self.get_context_data()
         # -- Restart Reviewing -- #
         elif self.request.POST.get('restart', None):
             self.request.session['moves'] = []
-            self.request.session['turn'] = False
             self.reviewer.restart()
             context = self.get_context_data()
         # -- Execute Move -- #
@@ -185,10 +175,7 @@ class ReviewVariation(View):
                 if self.request.POST.get(move, None):
                     self.reviewer.next_move(move)
                     self.request.session['moves'].append(move)
-                    self.request.session['turn'] = not self.request.session['turn']
                     context = self.get_context_data()
-            if not self.reviewer.possible_moves:
-                self.request.session['finished'] = True
         return render(self.request, self.template_name, context)
 
 
@@ -196,6 +183,7 @@ class PracticeVariation(View):
     template_name = 'repertoire/practice.html'
 
     def get_context_data(self, correct='other'):
+        correct = correct if self.practice.possible_moves else 'finished'
         return {
             'opening': self.opening,
             'variation': self.variation,
@@ -215,12 +203,6 @@ class PracticeVariation(View):
         self.request.session['moves'] = self.practice.run_visited_moves(
             self.request.session['moves']
         )
-
-        # -- Check if Finished from Review -- #
-        if self.request.session['finished']:
-            self.practice.restart()
-            self.request.session['moves'] = []
-            self.request.session['finished'] = False
         
         return super().dispatch(request, *args, **kwargs)
 
@@ -239,8 +221,7 @@ class PracticeVariation(View):
                     opp_move = self.practice.player_move(move)
                     self.request.session['moves'] += [move, opp_move]
                 except Exception:
-                    self.request.session['finished'] = True
-                    correct = 'finished'
+                    self.request.session['moves'] += [move]
             else:
                 correct = 'incorrect'
         # -- Show Hints of the Possible Moves -- #

@@ -31,7 +31,7 @@ class VariationForm(forms.ModelForm):
     class Meta:
         model = Variation
         fields = '__all__'
-        exclude = ['opening', 'pgn_file']
+        exclude = ['opening']
         
         widgets = {
             'name': forms.TextInput(
@@ -48,6 +48,7 @@ class VariationForm(forms.ModelForm):
             ),
             'on_turn': forms.NumberInput(attrs={'class': 'form-control'}),
             'nature': forms.Select(attrs={'class': 'form-control'}),
+            'pgn_file': forms.FileInput(attrs={'class': 'form-control'}),
             'image_file': forms.FileInput(attrs={'class': 'form-control'})
         }
         

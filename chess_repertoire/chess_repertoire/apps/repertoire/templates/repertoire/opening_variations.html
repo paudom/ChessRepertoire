@@ -76,7 +76,7 @@
 								{% if not opening.color %}
 									<span class="badge text-dark" style="background-color: #F5F3F4; width: 75px;">{{ variation.on_turn }}</span>
 								{% else %}
-									<span class="badge text-light" style="background-color: #161A1D;">{{ variation.on_turn }}</span>
+									<span class="badge text-light" style="background-color: #161A1D; width: 75px;">{{ variation.on_turn }}</span>
 								{% endif %}
 							</h5>
 						</div>
@@ -111,10 +111,16 @@
 			</div>
 		</div>
 	{% endfor %}
-	<div class="text-center pt-1">
-		<a href="{% url 'repertoire:new_variation' opening.slug %}" class="btn text-light" style="width: 350px; background-color: #6D6875;" role="button">New Variation</a>
-	</div>
-
+	<div class="container text-center" style="max-width: 850px;">
+		<div class="row">
+			<div class="col text-center">
+				<a href="{% url 'repertoire:openings' %}" class="btn text-light" style="width: 300px; background-color: #6D6875;" role="button">Other Openings</a>
+			</div>
+			<div class="col text-center">
+				<a href="{% url 'repertoire:new_variation' opening.slug %}" class="btn text-light" style="width: 300px; background-color: #6D6875;" role="button">New Variation</a>
+			</div>
+		</div>
+	</div>	
 	<!-- Pagination -->
 	<div class="pt-3 text-center">
 		{% if is_paginated %}

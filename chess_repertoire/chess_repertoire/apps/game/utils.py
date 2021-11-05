@@ -1,6 +1,12 @@
-from .constants import REPERTOIRE_ROOT
+from chess_repertoire.apps.repertoire.constants import REPERTOIRE_ROOT
 
 # -- Util Functions -- #
+def get_current_turn(list_of_moves):
+    return False if len(list_of_moves) % 2 == 0 else True
+
+def get_current_color(list_of_moves):
+    return 1 if get_current_turn(list_of_moves) else 0
+
 def read_pgn_file(pgn_path):
     with open(REPERTOIRE_ROOT + pgn_path, 'r') as file:
         full_lines = file.read().split(']')
