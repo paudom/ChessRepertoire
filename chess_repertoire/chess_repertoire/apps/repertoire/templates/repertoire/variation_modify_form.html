@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container mt-4 mx-auto" style="max-width: 850px;">
-	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 720px;">
+	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 950px;">
 		<form method="POST" enctype="multipart/form-data">
 			{% csrf_token %}
 			<div class="form-row py-3" style="padding-left: 80px; padding-right: 80px;">
@@ -45,15 +45,15 @@
 							{{ form.image_file }}
 						</div>
 					</div>
-					<div class="col" style="position: relative; top: 10px;">
-						<h6>PGN File (Current: {{ variation.pgn_file.url }}):</h6>
-						<div class="form-group">
-							{{ form.pgn_file }}
-						</div>
-					</div>
 				</div>
 			</div>
-			<div class="form-row" style="padding-left: 150px; padding-right: 150px; position: relative; top: 20px;">
+			<div class="form-row py-2" style="padding-left: 80px; padding-right: 80px;">
+				<div class="form-group">
+					<h6>PGN Contents</h6>
+					<textarea class="form-control" name="pgn_content" rows="12">{{ pgn_content }}</textarea>
+				</div>
+			</div>
+			<div class="form-row py-2" style="padding-left: 150px; padding-right: 150px;">
 				<div class="row">
 					<div class="col">
 						<button type="submit" class="btn text-light" style="width: 250px; background-color: #6D6875;" role="button">Submit</button>

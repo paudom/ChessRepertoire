@@ -4,6 +4,7 @@ import random
 
 from chess_repertoire.apps.repertoire.constants import CHESS_BOARD_SIZE
 
+from .utils import get_current_color
 
 class ChessBase():
     def __init__(self, pgn_file, color, size=CHESS_BOARD_SIZE):
@@ -71,11 +72,13 @@ class ChessReviewer(ChessBase):
 class ChessPractice(ChessBase):
 
     def run_visited_moves(self, run_moves):
-        if self.color and not run_moves:
-            opp_move = self.opponent_move()
-            run_moves.append(opp_move)
         for move in run_moves:
             self.next_move(move)
+        if self.color != get_current_color(run_moves):
+            opp_move = self.opponent_move()
+            if opp_move:
+                self.next_move(opp_move)
+                run_moves.append(opp_move)
         return run_moves
         
     def check_if_correct(self, move):
@@ -83,8 +86,7 @@ class ChessPractice(ChessBase):
     
     def opponent_move(self):
         moves = self.possible_moves
-        selected_move = random.choice(moves)
-        return selected_move
+        return random.choice(moves) if moves else None
     
     def player_move(self, move):
         self.next_move(move)

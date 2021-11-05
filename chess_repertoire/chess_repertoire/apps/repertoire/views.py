@@ -4,7 +4,9 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
 
-from chess_repertoire.apps.game import ChessReviewer, ChessPractice
+from chess_repertoire.apps.game import (
+    ChessReviewer, ChessPractice, get_current_turn, read_pgn_file, update_pgn_file
+)
 from .constants import MAX_OPENING_PER_PAGE, MAX_VARIATION_PER_PAGE
 from .models import Opening, Variation
 from .forms import OpeningForm, VariationForm
@@ -68,7 +70,7 @@ class OpeningVariations(ListView):
         if not self.request.session.get('moves', None):
             self.request.session['moves'] = []
         if not self.request.session.get('turn', None):
-            self.request.session['turn'] = False
+            self.request.session['turn'] = get_current_turn(self.request.session['moves'])
         return super().dispatch(self.request, *args, **kwargs)
 
     def get_queryset(self, **kwargs):
@@ -108,10 +110,21 @@ class ModifyVariation(UpdateView):
     form_class = VariationForm
     template_name = 'repertoire/variation_modify_form.html'
 
+    def form_valid(self, form):
+        variation = Variation.objects.get(slug=self.kwargs['slug'])
+        head, moves = read_pgn_file(variation.pgn_file.url)
+        pgn_content = self.request.POST.get('pgn_content', None).replace('\r', '')
+        if pgn_content:
+            if moves != pgn_content:
+                full_pgn_content = head + '\n\n' + pgn_content
+                update_pgn_file(variation.pgn_file.url, full_pgn_content)
+        return super().form_valid(form)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['opening'] = Opening.objects.get(name=self.kwargs['opn'])
         context['variation'] = Variation.objects.get(slug=self.kwargs['slug'])
+        _, context['pgn_content'] = read_pgn_file(context['variation'].pgn_file.url)
         return context
 
 
@@ -125,7 +138,7 @@ class ReviewVariation(View):
             'variation': self.variation,
             'board': mark_safe(self.reviewer.board),
             'all_moves': self.reviewer.possible_moves,
-            'turn': self.request.session['turn']
+            'turn': get_current_turn(self.request.session['moves'])
         }
 
     def dispatch(self, request, *args, **kwargs):
@@ -135,7 +148,7 @@ class ReviewVariation(View):
         # -- Initialize Reviewer -- #
         self.reviewer = ChessReviewer(
             self.variation.pgn_file.path,
-            self.variation.opening.color,
+            self.opening.color,
         )
         self.reviewer.run_visited_moves(self.request.session['moves'])
         
@@ -150,12 +163,10 @@ class ReviewVariation(View):
         if self.request.POST.get('undo', None):
             self.reviewer.undo_move()
             self.request.session['moves'].pop()
-            self.request.session['turn'] = not self.request.session['turn']
             context = self.get_context_data()
         # -- Restart Reviewing -- #
         elif self.request.POST.get('restart', None):
             self.request.session['moves'] = []
-            self.request.session['turn'] = False
             self.reviewer.restart()
             context = self.get_context_data()
         # -- Execute Move -- #
@@ -164,7 +175,6 @@ class ReviewVariation(View):
                 if self.request.POST.get(move, None):
                     self.reviewer.next_move(move)
                     self.request.session['moves'].append(move)
-                    self.request.session['turn'] = not self.request.session['turn']
                     context = self.get_context_data()
         return render(self.request, self.template_name, context)
 
@@ -173,6 +183,7 @@ class PracticeVariation(View):
     template_name = 'repertoire/practice.html'
 
     def get_context_data(self, correct='other'):
+        correct = correct if self.practice.possible_moves else 'finished'
         return {
             'opening': self.opening,
             'variation': self.variation,
@@ -184,7 +195,7 @@ class PracticeVariation(View):
         self.opening = Opening.objects.get(name=self.kwargs['opn'])
         self.variation = Variation.objects.get(slug=self.kwargs['slug'])
 
-        # -- Initialize Reviewer -- #
+        # -- Initialize Practice -- #
         self.practice = ChessPractice(
             self.variation.pgn_file.path,
             self.variation.opening.color,
@@ -210,7 +221,7 @@ class PracticeVariation(View):
                     opp_move = self.practice.player_move(move)
                     self.request.session['moves'] += [move, opp_move]
                 except Exception:
-                    correct = 'finished'
+                    self.request.session['moves'] += [move]
             else:
                 correct = 'incorrect'
         # -- Show Hints of the Possible Moves -- #

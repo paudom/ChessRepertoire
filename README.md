@@ -45,7 +45,7 @@ python3 manage.py runserver
 This will start a webpage at: `http://127.0.0.1/8000`
 
 ## How it works
-At the start the Database will be empty, so you will need to add new openings. To add Openings click the button `New Openings`.
+At the start the Database will be empty, so you will need to add new openings. To add Openings click the button `New Opening`.
 
 Once added you will be able to modify it, see it's information but never delete. This way it's impossible to lose your opening repertoire.
 You can also see al the variations for a Opening. 
