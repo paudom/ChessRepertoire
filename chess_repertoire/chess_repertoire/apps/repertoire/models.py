@@ -68,12 +68,12 @@ class Opening(models.Model):
     name = models.CharField(max_length=constants.MAX_LENGTH, unique=True)
     slug = AutoSlugField(populate_from='name')
     description = models.TextField(max_length=constants.OPENING_MAX_LENGTH, default='')
-    color = models.IntegerField(blank=False, choices=Color.choices)
+    color = models.IntegerField(choices=Color.choices)
     difficulty = models.CharField(
-        max_length=constants.MAX_LENGTH, blank=False, choices=Difficulty.choices
+        max_length=constants.MAX_LENGTH, choices=Difficulty.choices
     )
     category = models.CharField(
-        max_length=constants.MAX_LENGTH, blank=False, choices=Category.choices
+        max_length=constants.MAX_LENGTH, choices=Category.choices
     )
     image = models.ImageField(
         upload_to=opening_upload_attribute,
@@ -115,16 +115,17 @@ class Variation(models.Model):
         TRICKY = "TRC", "TRICKY"
         SHARP = "SHP", "SHARP"
         ADVANTAGEOUS = "ADV", "ADVANTAGEOUS"
+        UNFAVORABLE = "UNF", "UNFAVORABLE"
 
     name = models.CharField(max_length=constants.MAX_LENGTH, unique=True)
     slug = AutoSlugField(populate_from='name')
-    description = models.TextField(max_length=constants.VARIATION_MAX_LENGTH)
+    description = models.TextField(max_length=constants.VARIATION_MAX_LENGTH, default='')
     on_turn = models.PositiveIntegerField()
     nature = models.CharField(
-        max_length=constants.MAX_LENGTH, blank=False, choices=Nature.choices
+        max_length=constants.MAX_LENGTH, choices=Nature.choices
     )
     opening = models.ForeignKey(Opening, on_delete=models.CASCADE)
-    pgn_file = models.FileField(upload_to=variation_upload_attribute, blank=True)
+    pgn_file = models.FileField(upload_to=variation_upload_attribute)
     image_file = models.ImageField(
         upload_to=variation_upload_attribute,
         height_field=None,

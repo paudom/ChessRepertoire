@@ -38,6 +38,7 @@
 		</form>
 	</div>
 </div>
+
 <!--Displaying all Variations-->
 <div class="container mt-3 mx-auto" style="max-width: 850px;">
 	<h3 class="text-center" style="color: #F5F3F4;">Variations from {{ opening.name }}</h3>
@@ -92,6 +93,8 @@
 									<span class="badge text-light" style="background-color: #800F2F;">{{ variation.get_nature_display }}</span>
 								{% elif variation.nature == 'ADV' %}
 									<span class="badge text-light" style="background-color: #43AA8B;">{{ variation.get_nature_display }}</span>	
+								{% elif variation.nature == 'UNF' %}
+									<span class="badge text-light" style="background-color: #F27059;">{{ variation.get_nature_display }}</span>	
 								{% endif %}
 							</h5>
 						</div>
@@ -120,7 +123,8 @@
 				<a href="{% url 'repertoire:new_variation' opening.slug %}" class="btn text-light" style="width: 300px; background-color: #6D6875;" role="button">New Variation</a>
 			</div>
 		</div>
-	</div>	
+	</div>
+
 	<!-- Pagination -->
 	<div class="pt-3 text-center">
 		{% if is_paginated %}
