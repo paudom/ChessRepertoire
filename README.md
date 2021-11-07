@@ -1,7 +1,7 @@
 ![Badge](https://img.shields.io/static/v1?label=LANGUAGE%20USED&message=PYTHON&labelColor=505050&color=3776AB&style=for-the-badge&logoWidth=20&logoColor=3776AB&logo=python)
 ![Badge](https://img.shields.io/static/v1?label=USES&message=DJANGO&labelColor=505050&color=092E20&style=for-the-badge&logoWidth=20&logoColor=092E20&logo=django)
 ![Badge](https://img.shields.io/static/v1?label=Created%20By&message=Paudom&labelColor=505050&color=F5B047&style=for-the-badge&logoWidth=20&logoColor=F5B047&logo=adafruit)
-![Badge](https://img.shields.io/static/v1?label=Version&message=1.4.0&labelColor=505050&color=43AA8B&style=for-the-badge&logoWith=20&logoColor=43AA8B&logo=addthis)
+![Badge](https://img.shields.io/static/v1?label=Version&message=1.5.0&labelColor=505050&color=43AA8B&style=for-the-badge&logoWith=20&logoColor=43AA8B&logo=addthis)
 
 # ChessRepertoire
 Welcome to Chess Repertoire, an interactive webpage to review and practice your own chess repertoire. 
@@ -9,6 +9,14 @@ Welcome to Chess Repertoire, an interactive webpage to review and practice your 
 It allows you to record your chess repertoire digitally including openings and variations.
 
 ## Setup and Installation
+You have two options:
+
+- **Released Versions**: Donwload the released versions and follow those intructions.
+
+- **Normal Installation**: Follow the next steps to install by your own.
+
+### Normal Installation
+
 Python is a must. The dependency libraries are specified in the `requirements.txt`
 
 To install `Chess Repertoire` the following steps are encouraged:
@@ -45,16 +53,15 @@ python3 manage.py runserver
 This will start a webpage at: `http://127.0.0.1/8000`
 
 ## How it works
-At the start the Database will be empty, so you will need to add new openings. To add Openings click the button `New Opening`.
+At the start the Database will be empty, so you will need to add new openings. To add Openings click the button `New Opening` at the end of the home page.
 
-Once added you will be able to modify it, see it's information but never delete. This way it's impossible to lose your opening repertoire.
-You can also see al the variations for a Opening. 
+Once added you will be able to modify it, see it's information, go to their variations, but never delete. This way it's impossible to lose your opening repertoire. 
 
-As before, at first no variations are recorded in the Database, to add them, click `New Variation`. When adding variations, there are two important inputs.
+As before, at first no variations are recorded in the Database. To add them, click `New Variation`. When adding variations, there are two important inputs.
 
 1. **PGN FILE**: you need to add pgn files containing all the moves you want to review/practice.
 
-2.  **IMAGE FILE**: I recomend this image to be an image of the starting position of the variation. This image can be obtained using `chess.com/analysis` when downloading pgn, there's the image option.
+2.  **IMAGE FILE**: I recomend you to upload an image of the starting position of the variation. This image can be obtained using `chess.com/analysis` when downloading pgn, there's the image option.
 
 As Openings you can modify, review and practice them but not delete them.
 
