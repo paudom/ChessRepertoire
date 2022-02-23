@@ -36,7 +36,6 @@ pip install -r requirements.txt
 1. Start Database
 ```bash
 cd chess_repertoire
-python3 manage.py makemigrations
 python3 manage.py migrate
 ```
 
@@ -66,3 +65,6 @@ As before, at first no variations are recorded in the Database. To add them, cli
 As Openings you can modify, review and practice them but not delete them.
 
 > In the case you need to remove openings or variations, you can go to: http://127.0.0.1/8000/admin. A super user account will be required to access to the admin site. There you can access to all Openings and Variations and remove the ones you do not want.
+
+### MacOS Installation
+Check the releases and follow the instructions specified to install as a MacOS application

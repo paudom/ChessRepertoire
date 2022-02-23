@@ -136,6 +136,7 @@ media
 staticfiles
 .vscode
 *.sh
+*.icns
 
 # Error Handling
 .flake8
