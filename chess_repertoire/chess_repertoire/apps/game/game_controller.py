@@ -38,6 +38,10 @@ class ChessBase():
         return self.moves
     
     @property
+    def score(self):
+        return float(self.state.comment) if self.state.comment else 0.0
+    
+    @property
     def show_hints(self):
         uci_moves = [self.state.variations[x].move for x in range(len(self.state.variations))]
         for move in uci_moves:
