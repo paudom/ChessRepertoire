@@ -38,8 +38,8 @@ class ChessBase():
         return self.moves
     
     @property
-    def score(self):
-        return float(self.state.comment) if self.state.comment else 0.0
+    def analysis(self):
+        return str(self.state.comment) if self.state.comment else ''
     
     @property
     def show_hints(self):

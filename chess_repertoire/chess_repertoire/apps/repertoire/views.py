@@ -138,7 +138,7 @@ class ReviewVariation(View):
             'variation': self.variation,
             'board': mark_safe(self.reviewer.board),
             'all_moves': self.reviewer.possible_moves,
-            'score': self.reviewer.score,
+            'analysis': self.reviewer.analysis,
             'turn': get_current_turn(self.request.session['moves'])
         }
 
@@ -188,7 +188,7 @@ class PracticeVariation(View):
         return {
             'opening': self.opening,
             'variation': self.variation,
-            'score': self.practice.score,
+            'analysis': self.practice.analysis,
             'board': mark_safe(self.practice.board),
             'correct': correct
         }

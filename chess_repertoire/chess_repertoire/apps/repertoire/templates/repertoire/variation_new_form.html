@@ -2,10 +2,12 @@
 
 {% block title %}New Variation{% endblock %}
 
+{% load static %}
+
 {% block content %}
 <div class="container mt-4 mx-auto" style="max-width: 850px;">
 	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 615px;">
-		<form method="POST" enctype="multipart/form-data">
+		<form id="new_variation_form" method="POST" enctype="multipart/form-data">
 			{% csrf_token %}
 			<div class="form-row py-3" style="padding-left: 80px; padding-right: 80px;">
 				<div class="form-group">
