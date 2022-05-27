@@ -1,0 +1,6 @@
+pgn_directory: ???
+output_dir: ???
+engine:
+  path: ???
+  depth: 20
+  mate_score: 100

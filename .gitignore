@@ -129,13 +129,15 @@ dmypy.json
 .pyre/
 
 # Macintosh
-.DS_Store
+**/.DS_Store
 
 # From repository
 media
 staticfiles
 .vscode
 *.sh
+*.icns
+outputs/
 
 # Error Handling
 .flake8

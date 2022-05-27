@@ -2,47 +2,135 @@
 
 {% block title %}Review {{ variation.name }}{% endblock %}
 
+{% load static %}
+
 {% block content %}
 <div class="container mt-3 mx-auto" style="max-width: 850px;">
 	<h4 class="text-center" style="color: #F5F3F4;">Reviewing {{ variation.name }} from {{ opening.name }}</h4>
 	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 620px;">
-		<div class="container pt-3 pb-1 text-center rounded">
-			{{ board }}
-		</div>
-		<form method="POST">
-			{% csrf_token %}
-			<div class="container text-center" style="max-width: 650px;">
-				<div class="form-row">
-					<div class="row px-2 py-1">
-						{% if all_moves %}
-							{% for move in all_moves %}
-								<div class="col text-center">
-									{% if not turn %}
-										<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-dark mx-2" style="width: 85px; background-color: #F5F3F4;" role="button"><strong>{{ move }}</strong></button>
-									{% else %}
-										<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-light mx-2" style="width: 85px; background-color: #161A1D;" role="button"><strong>{{ move }}</strong></button>
-									{% endif %}
+		<div class="row">
+			<div class="col pt-3">
+				{% if nag == '!' %}
+					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
+						<img src="{% static 'repertoire/nag/great.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
+					</div>
+				{% elif nag == '!!' %}
+					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
+						<img src="{% static 'repertoire/nag/brilliant.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
+					</div>
+				{% elif nag == '?!' %}
+					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
+						<img src="{% static 'repertoire/nag/innacuracy.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
+					</div>
+				{% elif nag == '?' %}
+					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
+						<img src="{% static 'repertoire/nag/mistake.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
+					</div>
+				{% elif nag == '??' %}
+					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
+						<img src="{% static 'repertoire/nag/blunder.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
+					</div>
+				{% else %}
+					{% if not start_flag %}
+						{% if is_checkmate %}
+							{% if turn %}
+								<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
+									<img src="{% static 'repertoire/nag/checkmate_white.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
 								</div>
-							{% endfor %}
+							{% else %}
+								<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
+									<img src="{% static 'repertoire/nag/checkmate_black.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
+								</div>
+							{% endif %}
 						{% else %}
-							<div class="col pt-1">
-								<div class="container rounded text-center" style="background-color: #7F5539; width: 150px; height: 30px">
-									<h6 class="pt-1 text-light"><strong>FINISHED</strong></h6>
-								</div>
+							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
+								<img src="{% static 'repertoire/nag/correct.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
 							</div>
 						{% endif %}
-					</div>
-					<div class="row px-3 py-1">
-						<div class="col text-center" style="position: relative; left: 50px;">
-							<button type="submit" value="undo" name="undo" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Undo Move</button>
-						</div>
-						<div class="col text-center" style="position: relative; left: -50px;">
-							<button type="submit" value="restart" name="restart" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Restart</button>
-						</div>
-					</div>
-				</div>
+					{% endif %}
+				{% endif %}
 			</div>
-		</form>
+			<div class="col">
+				<div class="container pt-3 pb-1 text-center rounded">
+					{{ board }}
+				</div>
+				<form method="POST">
+					{% csrf_token %}
+					<div class="container text-center" style="max-width: 650px;">
+						<div class="form-row">
+							<div class="row px-2 py-1">
+								{% if all_moves %}
+									{% for move in all_moves %}
+										<div class="col text-center">
+											{% if not turn %}
+												<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-dark mx-2" style="width: 85px; background-color: #F5F3F4;" role="button"><strong>{{ move }}</strong></button>
+											{% else %}
+												<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-light mx-2" style="width: 85px; background-color: #161A1D;" role="button"><strong>{{ move }}</strong></button>
+											{% endif %}
+										</div>
+									{% endfor %}
+								{% else %}
+									<div class="col pt-1">
+										<div class="container rounded text-center" style="background-color: #7F5539; width: 150px; height: 30px">
+											<h6 class="pt-1 text-light"><strong>FINISHED</strong></h6>
+										</div>
+									</div>
+								{% endif %}
+							</div>
+							<div class="row px-3 py-1">
+								<div class="col text-center" style="position: relative; left: 20px;">
+									<button type="submit" value="undo" name="undo" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Undo Move</button>
+								</div>
+								<div class="col text-center" style="position: relative; left: -20px;">
+									<button type="submit" value="restart" name="restart" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Restart</button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="col pt-3">
+				{% if nag == '!' %}
+					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+						<img src="{% static 'repertoire/nag/great.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
+					</div>
+				{% elif nag == '!!' %}
+					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+						<img src="{% static 'repertoire/nag/brilliant.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
+					</div>
+				{% elif nag == '?!' %}
+					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+						<img src="{% static 'repertoire/nag/innacuracy.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
+					</div>
+				{% elif nag == '?' %}
+					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+						<img src="{% static 'repertoire/nag/mistake.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
+					</div>
+				{% elif nag == '??' %}
+					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+						<img src="{% static 'repertoire/nag/blunder.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
+					</div>
+				{% else %}
+					{% if not start_flag %}
+						{% if is_checkmate %}
+							{% if turn %}
+								<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+									<img src="{% static 'repertoire/nag/checkmate_white.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
+								</div>
+							{% else %}
+								<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+									<img src="{% static 'repertoire/nag/checkmate_black.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
+								</div>
+							{% endif %}
+						{% else %}
+							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+								<img src="{% static 'repertoire/nag/correct.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
+							</div>
+						{% endif %}
+					{% endif %}
+				{% endif %}
+			</div>
+		</div>
 	</div>
 	<div class="container text-center" style="max-width: 500px;">
 		<div class="row">
