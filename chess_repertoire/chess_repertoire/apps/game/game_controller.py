@@ -4,7 +4,7 @@ import random
 
 from chess_repertoire.apps.repertoire.constants import CHESS_BOARD_SIZE
 
-from .utils import get_current_color
+from .utils import get_current_color, NAG_TO_EXPRESSION
 
 class ChessBase():
     def __init__(self, pgn_file, color, size=CHESS_BOARD_SIZE):
@@ -30,16 +30,21 @@ class ChessBase():
         )
     
     @property
+    def nag(self):
+        nag = list(self.state.nags)
+        return NAG_TO_EXPRESSION[nag[0] if nag else 0]
+
+    @property
+    def is_checkmate(self):
+        return self.state.board().is_checkmate()
+    
+    @property
     def possible_moves(self):
         uci_moves = [self.state.variations[x].move for x in range(len(self.state.variations))]
         self.moves = []
         for move in uci_moves:
             self.moves.append(self.state.board().san(move))
         return self.moves
-    
-    @property
-    def analysis(self):
-        return str(self.state.comment) if self.state.comment else ''
     
     @property
     def show_hints(self):

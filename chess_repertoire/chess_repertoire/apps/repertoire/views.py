@@ -138,8 +138,10 @@ class ReviewVariation(View):
             'variation': self.variation,
             'board': mark_safe(self.reviewer.board),
             'all_moves': self.reviewer.possible_moves,
-            'analysis': self.reviewer.analysis,
-            'turn': get_current_turn(self.request.session['moves'])
+            'nag': self.reviewer.nag,
+            'is_checkmate': self.reviewer.is_checkmate,
+            'turn': get_current_turn(self.request.session['moves']),
+            'start_flag': len(self.request.session['moves']) == 0
         }
 
     def dispatch(self, request, *args, **kwargs):
@@ -188,9 +190,9 @@ class PracticeVariation(View):
         return {
             'opening': self.opening,
             'variation': self.variation,
-            'analysis': self.practice.analysis,
             'board': mark_safe(self.practice.board),
-            'correct': correct
+            'correct': correct,
+            'start_flag': len(self.request.session['moves']) == 0,
         }
     
     def dispatch(self, request, *args, **kwargs):

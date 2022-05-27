@@ -1,4 +1,15 @@
 from chess_repertoire.apps.repertoire.constants import REPERTOIRE_ROOT
+import chess.pgn as pgn
+
+# -- Constants -- #
+NAG_TO_EXPRESSION = {
+    0: '',
+    pgn.NAG_GOOD_MOVE: '!',
+    pgn.NAG_BRILLIANT_MOVE: '!!',
+    pgn.NAG_DUBIOUS_MOVE: '?!',
+    pgn.NAG_MISTAKE: '?',
+    pgn.NAG_BLUNDER: '??',
+}
 
 # -- Util Functions -- #
 def get_current_turn(list_of_moves):
