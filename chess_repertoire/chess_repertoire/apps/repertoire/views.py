@@ -192,6 +192,8 @@ class PracticeVariation(View):
             'variation': self.variation,
             'board': mark_safe(self.practice.board),
             'correct': correct,
+            'nag': self.practice.nag,
+            'is_checkmate': self.practice.is_checkmate,
             'start_flag': len(self.request.session['moves']) == 0,
         }
     
