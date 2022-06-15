@@ -12,11 +12,11 @@
 			<div class="col pt-3">
 				{% if is_checkmate %}
 					{% if turn %}
-						<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+						<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
 							<img src="{% static 'repertoire/nag/checkmate_white.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
 						</div>
 					{% else %}
-						<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+						<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
 							<img src="{% static 'repertoire/nag/checkmate_black.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
 						</div>
 					{% endif %}
@@ -31,27 +31,27 @@
 						</div>
 					{% elif correct == 'hint' %}
 						{% if nag == '!' %}
-							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
 								<img src="{% static 'repertoire/nag/great.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
 							</div>
 						{% elif nag == '!!' %}
-							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
 								<img src="{% static 'repertoire/nag/brilliant.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
 							</div>
 						{% elif nag == '!?' %}
-							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
 								<img src="{% static 'repertoire/nag/only_move.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
 							</div>
 						{% elif nag == '?!' %}
-							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
 								<img src="{% static 'repertoire/nag/innacuracy.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
 							</div>
 						{% elif nag == '?' %}
-							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
 								<img src="{% static 'repertoire/nag/mistake.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
 							</div>
 						{% elif nag == '??' %}
-							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
+							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
 								<img src="{% static 'repertoire/nag/blunder.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
 							</div>
 						{% else %}
