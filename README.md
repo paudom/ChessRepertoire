@@ -1,7 +1,7 @@
 ![Badge](https://img.shields.io/static/v1?label=LANGUAGE%20USED&message=PYTHON&labelColor=505050&color=3776AB&style=for-the-badge&logoWidth=20&logoColor=3776AB&logo=python)
 ![Badge](https://img.shields.io/static/v1?label=USES&message=DJANGO&labelColor=505050&color=092E20&style=for-the-badge&logoWidth=20&logoColor=092E20&logo=django)
 ![Badge](https://img.shields.io/static/v1?label=Created%20By&message=Paudom&labelColor=505050&color=F5B047&style=for-the-badge&logoWidth=20&logoColor=F5B047&logo=adafruit)
-![Badge](https://img.shields.io/static/v1?label=Version&message=1.5.0&labelColor=505050&color=43AA8B&style=for-the-badge&logoWith=20&logoColor=43AA8B&logo=addthis)
+![Badge](https://img.shields.io/static/v1?label=Version&message=1.6.0&labelColor=505050&color=43AA8B&style=for-the-badge&logoWith=20&logoColor=43AA8B&logo=addthis)
 
 # ChessRepertoire
 Welcome to Chess Repertoire, an interactive webpage to review and practice your own chess repertoire. 

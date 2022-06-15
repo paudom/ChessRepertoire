@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="container mt-4 mx-auto" style="max-width: 850px;">
-	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 950px;">
+	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 875px;">
 		<form method="POST" enctype="multipart/form-data">
 			{% csrf_token %}
 			<div class="form-row py-3" style="padding-left: 80px; padding-right: 80px;">
@@ -34,16 +34,6 @@
 					</div>
 					<div class="col">
 						{{ form.nature }}
-					</div>
-				</div>
-			</div>
-			<div class="form-row py-2" style="padding-left: 80px; padding-right: 80px;">
-				<div class="row">
-					<div class="col">
-						<h6>Image File (Current: {{ variation.image_file.url }}):</h6>
-						<div class="form-group">
-							{{ form.image_file }}
-						</div>
 					</div>
 				</div>
 			</div>

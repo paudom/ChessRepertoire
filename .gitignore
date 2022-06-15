@@ -130,6 +130,7 @@ dmypy.json
 
 # Macintosh
 **/.DS_Store
+.DS_Store
 
 # From repository
 media

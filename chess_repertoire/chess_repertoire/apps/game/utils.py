@@ -6,6 +6,7 @@ NAG_TO_EXPRESSION = {
     0: '',
     pgn.NAG_GOOD_MOVE: '!',
     pgn.NAG_BRILLIANT_MOVE: '!!',
+    pgn.NAG_SPECULATIVE_MOVE: '!?',
     pgn.NAG_DUBIOUS_MOVE: '?!',
     pgn.NAG_MISTAKE: '?',
     pgn.NAG_BLUNDER: '??',
