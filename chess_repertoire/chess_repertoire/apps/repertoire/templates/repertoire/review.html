@@ -110,14 +110,14 @@
 				{% csrf_token %}
 				<div class="container text-center" style="max-width: 650px;">
 					<div class="form-row">
-						<div class="row px-2 py-1">
+						<div class="row px-1 py-1">
 							{% if all_moves %}
 								{% for move in all_moves %}
 									<div class="col text-center">
 										{% if not turn %}
-											<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-dark mx-2" style="width: 90px; background-color: #F5F3F4;" role="button"><strong>{{ move }}</strong></button>
+											<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-dark mx-1" style="width: 90px; background-color: #F5F3F4;" role="button"><strong>{{ move }}</strong></button>
 										{% else %}
-											<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-light mx-2" style="width: 90px; background-color: #161A1D;" role="button"><strong>{{ move }}</strong></button>
+											<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-light mx-1" style="width: 90px; background-color: #161A1D;" role="button"><strong>{{ move }}</strong></button>
 										{% endif %}
 									</div>
 								{% endfor %}
