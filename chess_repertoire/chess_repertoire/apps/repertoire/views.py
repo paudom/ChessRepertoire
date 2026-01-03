@@ -3,6 +3,8 @@ from django.views import View
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
+from django.http import JsonResponse
+import json
 
 from chess_repertoire.apps.game import (
     ChessReviewer, ChessPractice, get_current_turn, read_pgn_file, update_pgn_file
@@ -240,3 +242,182 @@ class PracticeVariation(View):
             correct = 'other'
         context = self.get_context_data(correct=correct)
         return render(self.request, self.template_name, context)
+
+
+# -- AJAX Views for Drag-and-Drop Practice Mode -- #
+class PracticeValidateMove(View):
+    """AJAX endpoint to validate player's move and get opponent's response"""
+
+    def post(self, request, *args, **kwargs):
+        try:
+            # Parse request data
+            data = json.loads(request.body)
+            move = data.get('move', '')
+
+            # Get opening and variation
+            opening = Opening.objects.get(name=kwargs['opn'])
+            variation = Variation.objects.get(slug=kwargs['slug'])
+
+            # Initialize practice instance
+            practice = ChessPractice(
+                variation.pgn_file.path,
+                opening.color,
+            )
+
+            # Run visited moves from session
+            request.session['moves'] = practice.run_visited_moves(
+                request.session.get('moves', [])
+            )
+
+            # Validate the move
+            if practice.check_if_correct(move):
+                try:
+                    # Execute player move and get opponent's response
+                    opp_move = practice.player_move(move)
+                    request.session['moves'] += [move, opp_move]
+
+                    return JsonResponse({
+                        'correct': True,
+                        'opponent_move': opp_move,
+                        'fen': practice.state.board().fen(),
+                        'is_checkmate': practice.is_checkmate,
+                        'nag': practice.nag
+                    })
+                except Exception:
+                    # No opponent move available (practice finished)
+                    request.session['moves'] += [move]
+                    return JsonResponse({
+                        'correct': True,
+                        'opponent_move': None,
+                        'fen': practice.state.board().fen(),
+                        'is_checkmate': practice.is_checkmate,
+                        'nag': practice.nag
+                    })
+            else:
+                # Move is incorrect
+                return JsonResponse({
+                    'correct': False,
+                    'opponent_move': None,
+                    'fen': practice.state.board().fen(),
+                    'is_checkmate': practice.is_checkmate,
+                    'nag': practice.nag
+                })
+        except Exception as e:
+            return JsonResponse({
+                'error': str(e)
+            }, status=500)
+
+
+class PracticeGetPosition(View):
+    """AJAX endpoint to get current board position"""
+
+    def get(self, request, *args, **kwargs):
+        try:
+            # Get opening and variation
+            opening = Opening.objects.get(name=kwargs['opn'])
+            variation = Variation.objects.get(slug=kwargs['slug'])
+
+            # Initialize practice instance
+            practice = ChessPractice(
+                variation.pgn_file.path,
+                opening.color,
+            )
+
+            # Run visited moves from session
+            request.session['moves'] = practice.run_visited_moves(
+                request.session.get('moves', [])
+            )
+
+            # Determine if it's player's turn
+            from chess_repertoire.apps.game import get_current_color
+            current_color = get_current_color(request.session.get('moves', []))
+            is_player_turn = (opening.color == current_color)
+
+            # Check if practice is finished
+            finished = not bool(practice.possible_moves)
+
+            return JsonResponse({
+                'fen': practice.state.board().fen(),
+                'is_player_turn': is_player_turn,
+                'finished': finished,
+                'is_checkmate': practice.is_checkmate,
+                'nag': practice.nag
+            })
+        except Exception as e:
+            return JsonResponse({
+                'error': str(e)
+            }, status=500)
+
+
+class PracticeGetHints(View):
+    """AJAX endpoint to get legal moves for hints"""
+
+    def post(self, request, *args, **kwargs):
+        try:
+            # Get opening and variation
+            opening = Opening.objects.get(name=kwargs['opn'])
+            variation = Variation.objects.get(slug=kwargs['slug'])
+
+            # Initialize practice instance
+            practice = ChessPractice(
+                variation.pgn_file.path,
+                opening.color,
+            )
+
+            # Run visited moves from session
+            request.session['moves'] = practice.run_visited_moves(
+                request.session.get('moves', [])
+            )
+
+            # Get legal moves with UCI format (from/to squares)
+            legal_moves = []
+            for i in range(len(practice.state.variations)):
+                variation_move = practice.state.variations[i].move
+                legal_moves.append({
+                    'from': variation_move.from_square,
+                    'to': variation_move.to_square,
+                    'san': practice.state.board().san(variation_move)
+                })
+
+            return JsonResponse({
+                'legal_moves': legal_moves,
+                'nag': practice.nag
+            })
+        except Exception as e:
+            return JsonResponse({
+                'error': str(e)
+            }, status=500)
+
+
+class PracticeRestart(View):
+    """AJAX endpoint to restart practice"""
+
+    def post(self, request, *args, **kwargs):
+        try:
+            # Get opening and variation
+            opening = Opening.objects.get(name=kwargs['opn'])
+            variation = Variation.objects.get(slug=kwargs['slug'])
+
+            # Initialize practice instance
+            practice = ChessPractice(
+                variation.pgn_file.path,
+                opening.color,
+            )
+
+            # Restart and get initial moves
+            request.session['moves'] = practice.restart()
+
+            # Determine if it's player's turn
+            from chess_repertoire.apps.game import get_current_color
+            current_color = get_current_color(request.session.get('moves', []))
+            is_player_turn = (opening.color == current_color)
+
+            return JsonResponse({
+                'fen': practice.state.board().fen(),
+                'is_player_turn': is_player_turn,
+                'nag': practice.nag
+            })
+        except Exception as e:
+            return JsonResponse({
+                'error': str(e)
+            }, status=500)
