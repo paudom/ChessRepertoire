@@ -1,16 +1,4 @@
-"""
-Practice mode statistics tracking using Django sessions.
-
-This module provides session-based statistics tracking for practice mode without
-requiring database changes. Statistics are stored in request.session['practice_stats']
-and automatically cleared when the session expires or the user navigates away.
-
-Phase 1: Session-based storage (this implementation)
-Phase 2: Future migration to database models for persistent tracking
-"""
-
 from datetime import datetime
-
 
 class PracticeStatistics:
     """
@@ -25,14 +13,7 @@ class PracticeStatistics:
 
     @staticmethod
     def initialize_stats(session, opening_name, variation_slug):
-        """
-        Initialize fresh statistics for a new practice session.
-
-        Args:
-            session: Django request.session object
-            opening_name: Name of the opening being practiced
-            variation_slug: Slug of the variation being practiced
-        """
+        """Initialize fresh statistics for a new practice session."""
         now = datetime.now().isoformat()
 
         session[PracticeStatistics.SESSION_KEY] = {
@@ -51,27 +32,12 @@ class PracticeStatistics:
 
     @staticmethod
     def get_stats(session):
-        """
-        Retrieve current statistics from session.
-
-        Args:
-            session: Django request.session object
-
-        Returns:
-            dict: Statistics dictionary or None if not found
-        """
+        """Retrieve current statistics from session."""
         return session.get(PracticeStatistics.SESSION_KEY)
 
     @staticmethod
     def record_move(session, move, correct):
-        """
-        Record a move attempt (correct or incorrect).
-
-        Args:
-            session: Django request.session object
-            move: The move notation (e.g., 'e4', 'Nf3')
-            correct: Boolean indicating if move was correct
-        """
+        """Record a move attempt (correct or incorrect)."""
         stats = PracticeStatistics.get_stats(session)
         if not stats:
             return
@@ -97,12 +63,7 @@ class PracticeStatistics:
 
     @staticmethod
     def record_hint(session):
-        """
-        Record hint usage.
-
-        Args:
-            session: Django request.session object
-        """
+        """Record hint usage."""
         stats = PracticeStatistics.get_stats(session)
         if not stats:
             return
@@ -114,31 +75,8 @@ class PracticeStatistics:
         session.modified = True
 
     @staticmethod
-    def record_restart(session):
-        """
-        Record restart event (preserving cumulative statistics).
-
-        Args:
-            session: Django request.session object
-        """
-        stats = PracticeStatistics.get_stats(session)
-        if not stats:
-            return
-
-        stats['restarts'] += 1
-        stats['last_activity'] = datetime.now().isoformat()
-
-        session[PracticeStatistics.SESSION_KEY] = stats
-        session.modified = True
-
-    @staticmethod
     def mark_completed(session):
-        """
-        Mark practice session as completed.
-
-        Args:
-            session: Django request.session object
-        """
+        """Mark practice session as completed."""
         stats = PracticeStatistics.get_stats(session)
         if not stats:
             return
@@ -151,15 +89,7 @@ class PracticeStatistics:
 
     @staticmethod
     def calculate_accuracy(stats):
-        """
-        Calculate accuracy percentage.
-
-        Args:
-            stats: Statistics dictionary
-
-        Returns:
-            float: Accuracy percentage (0-100), returns 0 if no moves attempted
-        """
+        """Calculate accuracy percentage."""
         if not stats:
             return 0.0
 
@@ -171,15 +101,7 @@ class PracticeStatistics:
 
     @staticmethod
     def get_duration_seconds(stats):
-        """
-        Calculate session duration in seconds.
-
-        Args:
-            stats: Statistics dictionary
-
-        Returns:
-            int: Duration in seconds
-        """
+        """Calculate session duration in seconds."""
         if not stats:
             return 0
 
@@ -192,15 +114,7 @@ class PracticeStatistics:
 
     @staticmethod
     def format_duration(seconds):
-        """
-        Format duration as human-readable string.
-
-        Args:
-            seconds: Duration in seconds
-
-        Returns:
-            str: Formatted duration (e.g., "5m 23s", "1h 15m 30s", "42s")
-        """
+        """Format duration as human-readable string."""
         if seconds < 60:
             return f"{seconds}s"
 
@@ -216,15 +130,7 @@ class PracticeStatistics:
 
     @staticmethod
     def get_stats_summary(stats):
-        """
-        Get formatted summary for display.
-
-        Args:
-            stats: Statistics dictionary
-
-        Returns:
-            dict: Formatted summary with accuracy, duration, total_attempts
-        """
+        """Get formatted summary for display."""
         if not stats:
             return {
                 'accuracy': 0.0,
