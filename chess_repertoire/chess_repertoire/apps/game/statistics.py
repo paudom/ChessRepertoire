@@ -24,7 +24,6 @@ class PracticeStatistics:
             'correct_moves': 0,
             'incorrect_moves': 0,
             'hints_used': 0,
-            'restarts': 0,
             'completed': False,
             'move_history': []
         }
