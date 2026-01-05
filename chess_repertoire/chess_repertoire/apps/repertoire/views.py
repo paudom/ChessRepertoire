@@ -332,9 +332,17 @@ class PracticeRestart(PracticeAjaxMixin, View):
         context = self.get_practice_context()
         practice = context['practice']
         opening = context['opening']
+        variation = context['variation']
 
         # Restart and get initial moves
         request.session['moves'] = practice.restart()
+
+        # Reset statistics for fresh practice session
+        PracticeStatistics.initialize_stats(
+            request.session,
+            opening.name,
+            variation.slug
+        )
 
         # Determine if it's player's turn
         is_player_turn = self.get_player_turn_status(opening)
