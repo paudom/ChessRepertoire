@@ -3,14 +3,18 @@ from django.views import View
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
+from django.http import JsonResponse
+import json
 
 from chess_repertoire.apps.game import (
     ChessReviewer, ChessPractice, get_current_turn, read_pgn_file, update_pgn_file
 )
+from chess_repertoire.apps.game.statistics import PracticeStatistics
 from .constants import MAX_OPENING_PER_PAGE, MAX_VARIATION_PER_PAGE
 from .models import Opening, Variation
 from .forms import OpeningForm, VariationForm
 from .filters import OpeningFilter, VariationFilter
+from .mixins import PracticeAjaxMixin
 
 # -- General Views -- #
 class AboutPage(TemplateView):
@@ -209,7 +213,16 @@ class PracticeVariation(View):
         self.request.session['moves'] = self.practice.run_visited_moves(
             self.request.session['moves']
         )
-        
+
+        # Initialize statistics if needed
+        stats = PracticeStatistics.get_stats(self.request.session)
+        if not stats or stats.get('variation_slug') != self.kwargs['slug']:
+            PracticeStatistics.initialize_stats(
+                self.request.session,
+                self.opening.name,
+                self.variation.slug
+            )
+
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -240,3 +253,159 @@ class PracticeVariation(View):
             correct = 'other'
         context = self.get_context_data(correct=correct)
         return render(self.request, self.template_name, context)
+
+
+# -- AJAX Views for Drag-and-Drop Practice Mode -- #
+class PracticeValidateMove(PracticeAjaxMixin, View):
+    """AJAX endpoint to validate player's move and get opponent's response"""
+
+    def post(self, request, *args, **kwargs):
+        # Parse request data
+        data = json.loads(request.body)
+        move = data.get('move', '')
+
+        # Get practice context (opening, variation, practice instance)
+        context = self.get_practice_context()
+        practice = context['practice']
+
+        # Validate the move
+        if practice.check_if_correct(move):
+            # Record correct move
+            PracticeStatistics.record_move(request.session, move, correct=True)
+
+            try:
+                # Execute player move and get opponent's response
+                opp_move = practice.player_move(move)
+                request.session['moves'] += [move, opp_move]
+
+                return JsonResponse({
+                    'correct': True,
+                    'opponent_move': opp_move,
+                    'fen': practice.state.board().fen(),
+                    'is_checkmate': practice.is_checkmate,
+                    'nag': practice.nag
+                })
+            except Exception:
+                # No opponent move available (practice finished)
+                PracticeStatistics.mark_completed(request.session)
+                request.session['moves'] += [move]
+                return JsonResponse({
+                    'correct': True,
+                    'opponent_move': None,
+                    'fen': practice.state.board().fen(),
+                    'is_checkmate': practice.is_checkmate,
+                    'nag': practice.nag
+                })
+        else:
+            # Record incorrect move
+            PracticeStatistics.record_move(request.session, move, correct=False)
+
+            # Move is incorrect
+            return JsonResponse({
+                'correct': False,
+                'opponent_move': None,
+                'fen': practice.state.board().fen(),
+                'is_checkmate': practice.is_checkmate,
+                'nag': practice.nag
+            })
+
+
+class PracticeGetPosition(PracticeAjaxMixin, View):
+    """AJAX endpoint to get current board position"""
+
+    def get(self, request, *args, **kwargs):
+        # Get practice context (opening, variation, practice instance)
+        context = self.get_practice_context()
+        practice = context['practice']
+        opening = context['opening']
+
+        # Determine if it's player's turn
+        is_player_turn = self.get_player_turn_status(opening)
+
+        # Check if practice is finished
+        finished = not bool(practice.possible_moves)
+
+        return JsonResponse({
+            'fen': practice.state.board().fen(),
+            'is_player_turn': is_player_turn,
+            'finished': finished,
+            'is_checkmate': practice.is_checkmate,
+            'nag': practice.nag
+        })
+
+
+class PracticeGetHints(PracticeAjaxMixin, View):
+    """AJAX endpoint to get legal moves for hints"""
+
+    def post(self, request, *args, **kwargs):
+        # Get practice context (opening, variation, practice instance)
+        context = self.get_practice_context()
+        practice = context['practice']
+
+        # Get legal moves with UCI format (from/to squares)
+        legal_moves = []
+        for i in range(len(practice.state.variations)):
+            variation_move = practice.state.variations[i].move
+            legal_moves.append({
+                'from': variation_move.from_square,
+                'to': variation_move.to_square,
+                'san': practice.state.board().san(variation_move)
+            })
+
+        # Record hint usage
+        PracticeStatistics.record_hint(request.session)
+
+        return JsonResponse({
+            'legal_moves': legal_moves,
+            'nag': practice.nag
+        })
+
+
+class PracticeRestart(PracticeAjaxMixin, View):
+    """AJAX endpoint to restart practice"""
+
+    def post(self, request, *args, **kwargs):
+        # Get practice context (opening, variation, practice instance)
+        context = self.get_practice_context()
+        practice = context['practice']
+        opening = context['opening']
+
+        # Restart and get initial moves
+        request.session['moves'] = practice.restart()
+
+        # Determine if it's player's turn
+        is_player_turn = self.get_player_turn_status(opening)
+
+        return JsonResponse({
+            'fen': practice.state.board().fen(),
+            'is_player_turn': is_player_turn,
+            'nag': practice.nag
+        })
+
+
+class PracticeGetStatistics(View):
+    """AJAX endpoint to get current statistics"""
+
+    def get(self, request, *args, **kwargs):
+        try:
+            stats = PracticeStatistics.get_stats(request.session)
+
+            if not stats:
+                return JsonResponse({'error': 'No statistics'}, status=404)
+
+            if (stats.get('opening_name') != kwargs['opn'] or
+                stats.get('variation_slug') != kwargs['slug']):
+                return JsonResponse({'error': 'Stats mismatch'}, status=400)
+
+            summary = PracticeStatistics.get_stats_summary(stats)
+
+            return JsonResponse({
+                'correct_moves': stats['correct_moves'],
+                'incorrect_moves': stats['incorrect_moves'],
+                'hints_used': stats['hints_used'],
+                'accuracy': summary['accuracy'],
+                'total_attempts': summary['total_attempts'],
+                'completed': stats['completed']
+            })
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)

@@ -7,6 +7,37 @@
 {% block content %}
 <div class="container mt-3 mx-auto" style="max-width: 850px;">
 	<h4 class="text-center" style="color: #F5F3F4;">Practicing {{ variation.name }} from {{ opening.name }}</h4>
+
+	<!-- Statistics Panel -->
+	<div class="container mt-2 mb-3 pt-2 pb-2 text-center rounded" style="background-color: #6D6875; max-width: 850px;">
+		<div class="row">
+			<div class="col-3">
+				<div class="stat-box">
+					<div class="stat-label">Accuracy</div>
+					<div class="stat-value" id="stat-accuracy">--%</div>
+				</div>
+			</div>
+			<div class="col-3">
+				<div class="stat-box">
+					<div class="stat-label">Correct</div>
+					<div class="stat-value" id="stat-correct">0</div>
+				</div>
+			</div>
+			<div class="col-3">
+				<div class="stat-box">
+					<div class="stat-label">Incorrect</div>
+					<div class="stat-value" id="stat-incorrect">0</div>
+				</div>
+			</div>
+			<div class="col-3">
+				<div class="stat-box">
+					<div class="stat-label">Hints</div>
+					<div class="stat-value" id="stat-hints">0</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 620px;">
 		<div class="row">
 			<div class="col pt-3">
@@ -64,65 +95,25 @@
 			</div>
 			<div class="col">
 				<div class="container pt-3 pb-1 text-center rounded">
-					{{ board }}
+					<div id="chessboard" style="width: 500px; margin: 0 auto;"></div>
 				</div>
-				<form method="POST">
-					{% csrf_token %}
-					<div class="container text-center" style="max-width: 500px;">
-						<div class="form-row">
-							<div class="row px-2 py-1">
-								{% if correct == 'correct' %}
-									<div class="col">
-										<input class="form-control" type="text" name="move" placeholder="Enter a Move">
-									</div>
-									<div class="col pt-1">
-										<div class="container rounded text-center" style="background-color: #90B36D; width: 150px; height: 30px">
-											<h6 class="pt-1 text-light"><strong>CORRECT</strong></h6>
-										</div>
-									</div>
-								{% elif correct == 'incorrect' %}
-									<div class="col">
-										<input class="form-control" type="text" name="move" placeholder="Enter a Move">
-									</div>
-									<div class="col pt-1">
-										<div class="container rounded text-center" style="background-color: #E24E51; width: 150px; height: 30px">
-											<h6 class="pt-1 text-light"><strong>INCORRECT</strong></h6>
-										</div>
-									</div>
-								{% elif correct == 'hint' %}
-									<div class="col">
-										<input class="form-control" type="text" name="move" placeholder="Enter a Move">
-									</div>
-									<div class="col pt-1">
-										<div class="container rounded text-center" style="background-color: #8187DC; width: 150px; height: 30px">
-											<h6 class="pt-1 text-light"><strong>HINT</strong></h6>
-										</div>
-									</div>
-								{% elif correct == 'finished' %}
-									<div class="col pt-1">
-										<div class="container rounded text-center" style="background-color: #7F5539; width: 150px; height: 30px">
-											<h6 class="pt-1 text-light"><strong>FINISHED</strong></h6>
-										</div>
-									</div>
-								{% else %}
-									<div class="col">
-										<input class="form-control" type="text" name="move" placeholder="Enter a Move">
-									</div>
-								{% endif %}
+				<div class="container text-center" style="max-width: 500px;">
+					<div class="form-row">
+						<div class="row px-2 py-1">
+							<div class="col pt-1">
+								<div id="status-container"></div>
 							</div>
-							<div class="row px-3 py-1">
-								<div class="col text-center">
-									<button type="submit" value="restart" name="restart" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Restart</button>
-								</div>
-								{% if correct != 'finished' %}
-									<div class="col text-center">
-										<button type="submit" value="hint" name="hint" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Show Hint</button>
-									</div>
-								{% endif %}
+						</div>
+						<div class="row px-3 py-1">
+							<div class="col text-center">
+								<button id="restart-btn" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Restart</button>
+							</div>
+							<div class="col text-center">
+								<button id="hint-btn" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Show Hint</button>
 							</div>
 						</div>
 					</div>
-				</form>
+				</div>
 			</div>
 			<div class="col pt-3">
 				{% if is_checkmate %}
@@ -184,10 +175,109 @@
 			<div class="col text-center">
 				<a href="{% url 'repertoire:opening_variations' opening.slug %}" class="btn text-light" style="width: 200px; background-color: #6D6875;" role="button">Other Variations</a>
 			</div>
-			<div class="col text-center">
-				<a href="{% url 'repertoire:review' opening.name variation.slug %}" class="btn text-light" style="width: 200px; background-color: #6D6875;" role="button">Review</a>
+		</div>
+	</div>
+</div>
+
+<!-- Completion Modal -->
+<div class="modal fade" id="completionModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+	<div class="modal-dialog modal-dialog-centered">
+		<div class="modal-content" style="background-color: #DDB892;">
+			<div class="modal-header" style="border-bottom: 2px solid #6D6875;">
+				<h5 class="modal-title" style="color: #6D6875;">Practice Complete!</h5>
+			</div>
+			<div class="modal-body text-center">
+				<h3 style="color: #6D6875;">Well Done!</h3>
+				<div class="row mt-3 justify-content-center">
+					<div class="col-8">
+						<div class="completion-stat">
+							<div class="completion-label">Accuracy</div>
+							<div class="completion-value" id="final-accuracy">--%</div>
+						</div>
+					</div>
+				</div>
+				<div class="row mt-3">
+					<div class="col-4">
+						<small style="color: #6D6875;">Correct: <span id="final-correct">0</span></small>
+					</div>
+					<div class="col-4">
+						<small style="color: #6D6875;">Incorrect: <span id="final-incorrect">0</span></small>
+					</div>
+					<div class="col-4">
+						<small style="color: #6D6875;">Hints: <span id="final-hints">0</span></small>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer" style="border-top: 2px solid #6D6875;">
+				<button type="button" class="btn text-light" style="background-color: #6D6875;" onclick="restartPractice()">Practice Again</button>
+				<button type="button" class="btn text-light" style="background-color: #6D6875;" data-bs-dismiss="modal">Close</button>
 			</div>
 		</div>
 	</div>
 </div>
+
+<!-- Promotion Dialog Modal -->
+<div class="modal fade" id="promotionModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content" style="background-color: #DDB892;">
+      <div class="modal-header border-0">
+        <h5 class="modal-title" style="color: #F5F3F4;">Choose Promotion Piece</h5>
+      </div>
+      <div class="modal-body">
+        <div class="row text-center">
+          <div class="col-6 mb-3">
+            <button type="button" class="btn promotion-piece" data-piece="q">
+              <img id="promo-queen-img" src="" alt="Queen" width="80" height="80">
+              <div style="color: #F5F3F4; margin-top: 5px;">Queen</div>
+            </button>
+          </div>
+          <div class="col-6 mb-3">
+            <button type="button" class="btn promotion-piece" data-piece="r">
+              <img id="promo-rook-img" src="" alt="Rook" width="80" height="80">
+              <div style="color: #F5F3F4; margin-top: 5px;">Rook</div>
+            </button>
+          </div>
+          <div class="col-6">
+            <button type="button" class="btn promotion-piece" data-piece="b">
+              <img id="promo-bishop-img" src="" alt="Bishop" width="80" height="80">
+              <div style="color: #F5F3F4; margin-top: 5px;">Bishop</div>
+            </button>
+          </div>
+          <div class="col-6">
+            <button type="button" class="btn promotion-piece" data-piece="n">
+              <img id="promo-knight-img" src="" alt="Knight" width="80" height="80">
+              <div style="color: #F5F3F4; margin-top: 5px;">Knight</div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JavaScript Libraries for Drag-and-Drop Chess -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+<script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
+<!-- Custom Practice Board Styles -->
+<link rel="stylesheet" href="{% static 'repertoire/css/practice_board.css' %}">
+
+<!-- Django variables for JavaScript -->
+<script>
+    var playerColor = '{{ opening.color|yesno:"b,w" }}';
+    var openingName = '{{ opening.name }}';
+    var variationSlug = '{{ variation.slug }}';
+    var csrfToken = '{{ csrf_token }}';
+    var validateMoveUrl = '{% url "repertoire:practice_validate_move" opening.name variation.slug %}';
+    var getPositionUrl = '{% url "repertoire:practice_get_position" opening.name variation.slug %}';
+    var getHintsUrl = '{% url "repertoire:practice_get_hints" opening.name variation.slug %}';
+    var restartUrl = '{% url "repertoire:practice_restart" opening.name variation.slug %}';
+    var getStatisticsUrl = '{% url "repertoire:practice_get_statistics" opening.name variation.slug %}';
+</script>
+
+<!-- Custom Practice Board Logic -->
+<script src="{% static 'repertoire/js/practice_board.js' %}"></script>
+
 {% endblock %}
