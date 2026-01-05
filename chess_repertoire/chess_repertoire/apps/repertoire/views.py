@@ -136,53 +136,16 @@ class ModifyVariation(UpdateView):
 class ReviewVariation(View):
     template_name = 'repertoire/review.html'
 
-    def get_context_data(self):
-        return {
-            'opening': self.opening,
-            'variation': self.variation,
-            'board': mark_safe(self.reviewer.board),
-            'all_moves': self.reviewer.possible_moves,
-            'nag': self.reviewer.nag,
-            'is_checkmate': self.reviewer.is_checkmate,
-            'turn': get_current_turn(self.request.session['moves']),
-            'start_flag': len(self.request.session['moves']) == 0
-        }
-
     def dispatch(self, request, *args, **kwargs):
         self.opening = Opening.objects.get(name=self.kwargs['opn'])
         self.variation = Variation.objects.get(slug=self.kwargs['slug'])
-
-        # -- Initialize Reviewer -- #
-        self.reviewer = ChessReviewer(
-            self.variation.pgn_file.path,
-            self.opening.color,
-        )
-        self.reviewer.run_visited_moves(self.request.session['moves'])
-        
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        context = self.get_context_data()
-        return render(self.request, self.template_name, context)
-
-    def post(self, request, *args, **kwargs):
-        # -- Undo Move -- #
-        if self.request.POST.get('undo', None):
-            self.reviewer.undo_move()
-            self.request.session['moves'].pop()
-            context = self.get_context_data()
-        # -- Restart Reviewing -- #
-        elif self.request.POST.get('restart', None):
-            self.request.session['moves'] = []
-            self.reviewer.restart()
-            context = self.get_context_data()
-        # -- Execute Move -- #
-        else:
-            for move in self.reviewer.possible_moves:
-                if self.request.POST.get(move, None):
-                    self.reviewer.next_move(move)
-                    self.request.session['moves'].append(move)
-                    context = self.get_context_data()
+        context = {
+            'opening': self.opening,
+            'variation': self.variation,
+        }
         return render(self.request, self.template_name, context)
 
 
@@ -409,3 +372,118 @@ class PracticeGetStatistics(View):
             })
         except Exception as e:
             return JsonResponse({'error': str(e)}, status=500)
+
+
+# -- AJAX Views for Review Mode -- #
+class ReviewExecuteMove(View):
+    """AJAX endpoint to execute a move in review mode"""
+
+    def post(self, request, *args, **kwargs):
+        data = json.loads(request.body)
+        move = data.get('move', '')
+
+        opening = Opening.objects.get(name=kwargs['opn'])
+        variation = Variation.objects.get(slug=kwargs['slug'])
+
+        # Initialize moves list if not present
+        if 'moves' not in request.session or request.session['moves'] is None:
+            request.session['moves'] = []
+
+        reviewer = ChessReviewer(variation.pgn_file.path, opening.color)
+        # Note: run_visited_moves returns None, it just updates the reviewer state
+        reviewer.run_visited_moves(request.session['moves'])
+
+        # Validate and execute move
+        if move in reviewer.possible_moves:
+            reviewer.next_move(move)
+            request.session['moves'].append(move)
+
+        request.session.modified = True
+
+        return JsonResponse({
+            'fen': reviewer.state.board().fen(),
+            'possible_moves': reviewer.possible_moves,
+            'nag': reviewer.nag,
+            'is_checkmate': reviewer.is_checkmate,
+            'finished': not bool(reviewer.possible_moves)
+        })
+
+
+class ReviewUndoMove(View):
+    """AJAX endpoint to undo the last move"""
+
+    def post(self, request, *args, **kwargs):
+        opening = Opening.objects.get(name=kwargs['opn'])
+        variation = Variation.objects.get(slug=kwargs['slug'])
+
+        # Initialize moves list if not present
+        if 'moves' not in request.session or request.session['moves'] is None:
+            request.session['moves'] = []
+
+        # Pop last move if exists
+        if request.session['moves']:
+            request.session['moves'].pop()
+
+        reviewer = ChessReviewer(variation.pgn_file.path, opening.color)
+        # Note: run_visited_moves returns None, it just updates the reviewer state
+        reviewer.run_visited_moves(request.session['moves'])
+
+        request.session.modified = True
+
+        return JsonResponse({
+            'fen': reviewer.state.board().fen(),
+            'possible_moves': reviewer.possible_moves,
+            'nag': reviewer.nag,
+            'is_checkmate': reviewer.is_checkmate,
+            'moves_count': len(request.session['moves'])
+        })
+
+
+class ReviewRestart(View):
+    """AJAX endpoint to restart review from beginning"""
+
+    def post(self, request, *args, **kwargs):
+        opening = Opening.objects.get(name=kwargs['opn'])
+        variation = Variation.objects.get(slug=kwargs['slug'])
+
+        reviewer = ChessReviewer(variation.pgn_file.path, opening.color)
+        restarted_moves = reviewer.restart()
+
+        # Ensure we have a valid list
+        request.session['moves'] = restarted_moves if restarted_moves is not None else []
+        request.session.modified = True
+
+        return JsonResponse({
+            'fen': reviewer.state.board().fen(),
+            'possible_moves': reviewer.possible_moves,
+            'nag': reviewer.nag,
+            'is_checkmate': reviewer.is_checkmate,
+            'orientation': 'white' if opening.color == 0 else 'black'
+        })
+
+
+class ReviewGetPosition(View):
+    """AJAX endpoint to get current board state"""
+
+    def get(self, request, *args, **kwargs):
+        opening = Opening.objects.get(name=kwargs['opn'])
+        variation = Variation.objects.get(slug=kwargs['slug'])
+
+        # Initialize moves list if not present
+        if 'moves' not in request.session or request.session['moves'] is None:
+            request.session['moves'] = []
+
+        reviewer = ChessReviewer(variation.pgn_file.path, opening.color)
+        # Note: run_visited_moves returns None, it just updates the reviewer state
+        reviewer.run_visited_moves(request.session['moves'])
+
+        request.session.modified = True
+
+        return JsonResponse({
+            'fen': reviewer.state.board().fen(),
+            'possible_moves': reviewer.possible_moves,
+            'nag': reviewer.nag,
+            'is_checkmate': reviewer.is_checkmate,
+            'start_flag': len(request.session['moves']) == 0,
+            'orientation': 'white' if opening.color == 0 else 'black'
+        })

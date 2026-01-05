@@ -20,5 +20,10 @@ urlpatterns = [
     path('<str:opn>/<slug:slug>/practice/get_position/', views.PracticeGetPosition.as_view(), name='practice_get_position'),
     path('<str:opn>/<slug:slug>/practice/get_hints/', views.PracticeGetHints.as_view(), name='practice_get_hints'),
     path('<str:opn>/<slug:slug>/practice/restart/', views.PracticeRestart.as_view(), name='practice_restart'),
-    path('<str:opn>/<slug:slug>/practice/get_statistics/', views.PracticeGetStatistics.as_view(), name='practice_get_statistics')
+    path('<str:opn>/<slug:slug>/practice/get_statistics/', views.PracticeGetStatistics.as_view(), name='practice_get_statistics'),
+    # AJAX endpoints for review mode
+    path('<str:opn>/<slug:slug>/review/execute_move/', views.ReviewExecuteMove.as_view(), name='review_execute_move'),
+    path('<str:opn>/<slug:slug>/review/undo_move/', views.ReviewUndoMove.as_view(), name='review_undo_move'),
+    path('<str:opn>/<slug:slug>/review/restart/', views.ReviewRestart.as_view(), name='review_restart'),
+    path('<str:opn>/<slug:slug>/review/get_position/', views.ReviewGetPosition.as_view(), name='review_get_position'),
 ]
