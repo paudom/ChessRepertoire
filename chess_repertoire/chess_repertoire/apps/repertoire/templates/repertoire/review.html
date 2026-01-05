@@ -5,152 +5,69 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-3 mx-auto" style="max-width: 850px;">
+<div class="container mt-3 mx-auto" style="max-width: 900px;">
 	<h4 class="text-center" style="color: #F5F3F4;">Reviewing {{ variation.name }} from {{ opening.name }}</h4>
-	<div class="container mt-3 mb-3 px-0 rounded" style="background-color:#DDB892; height: 620px;">
+	<div class="container mt-3 mb-3 px-3 py-3 rounded" style="background-color:#DDB892;">
 		<div class="row">
-			<div class="col pt-3">
-				{% if nag == '!' %}
-					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
-						<img src="{% static 'repertoire/nag/great.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-					</div>
-				{% elif nag == '!!' %}
-					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
-						<img src="{% static 'repertoire/nag/brilliant.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-					</div>
-				{% elif nag == '!?' %}
-					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
-						<img src="{% static 'repertoire/nag/only_move.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-					</div>
-				{% elif nag == '?!' %}
-					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
-						<img src="{% static 'repertoire/nag/innacuracy.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-					</div>
-				{% elif nag == '?' %}
-					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
-						<img src="{% static 'repertoire/nag/mistake.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-					</div>
-				{% elif nag == '??' %}
-					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
-						<img src="{% static 'repertoire/nag/blunder.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-					</div>
-				{% else %}
-					{% if not start_flag %}
-						{% if is_checkmate %}
-							{% if turn %}
-								<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
-									<img src="{% static 'repertoire/nag/checkmate_white.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-								</div>
-							{% else %}
-								<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
-									<img src="{% static 'repertoire/nag/checkmate_black.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-								</div>
-							{% endif %}
-						{% else %}
-							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; left: 25px; top: 125px;">
-								<img src="{% static 'repertoire/nag/correct.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-							</div>
-						{% endif %}
-					{% endif %}
-				{% endif %}
+			<div class="col-2 d-flex align-items-center justify-content-center">
+				<div id="nag-indicator-left"></div>
 			</div>
-			<div class="col">
-				<div class="container pt-3 pb-1 text-center rounded">
-					{{ board }}
+			<div class="col-8">
+				<div class="container pt-2 pb-2 text-center">
+					<div id="chessboard" style="width: 500px; margin: 0 auto;"></div>
 				</div>
 			</div>
-			<div class="col pt-3">
-				{% if nag == '!' %}
-					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
-						<img src="{% static 'repertoire/nag/great.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-					</div>
-				{% elif nag == '!!' %}
-					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
-						<img src="{% static 'repertoire/nag/brilliant.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-					</div>
-				{% elif nag == '!?' %}
-					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
-						<img src="{% static 'repertoire/nag/only_move.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-					</div>
-				{% elif nag == '?!' %}
-					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
-						<img src="{% static 'repertoire/nag/innacuracy.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-					</div>
-				{% elif nag == '?' %}
-					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
-						<img src="{% static 'repertoire/nag/mistake.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-					</div>
-				{% elif nag == '??' %}
-					<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
-						<img src="{% static 'repertoire/nag/blunder.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-					</div>
-				{% else %}
-					{% if not start_flag %}
-						{% if is_checkmate %}
-							{% if turn %}
-								<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
-									<img src="{% static 'repertoire/nag/checkmate_white.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-								</div>
-							{% else %}
-								<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
-									<img src="{% static 'repertoire/nag/checkmate_black.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-								</div>
-							{% endif %}
-						{% else %}
-							<div class="container mt-3 mb-3 px-0 rounded text-center" style="position: relative; right: 25px; top: 125px;">
-								<img src="{% static 'repertoire/nag/correct.png' %}" width="128" height="128" style="position: relative; top: 60px" class="img-fluid" alt="Piece">
-							</div>
-						{% endif %}
-					{% endif %}
-				{% endif %}
+			<div class="col-2 d-flex align-items-center justify-content-center">
+				<div id="nag-indicator-right"></div>
 			</div>
 		</div>
-		<div class="row">
-			<form method="POST">
-				{% csrf_token %}
-				<div class="container text-center" style="max-width: 650px;">
-					<div class="form-row">
-						<div class="row px-1 py-1">
-							{% if all_moves %}
-								{% for move in all_moves %}
-									<div class="col text-center">
-										{% if not turn %}
-											<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-dark mx-1" style="width: 90px; background-color: #F5F3F4;" role="button"><strong>{{ move }}</strong></button>
-										{% else %}
-											<button type="submit" value="{{ move }}" name="{{ move }}" class="btn text-light mx-1" style="width: 90px; background-color: #161A1D;" role="button"><strong>{{ move }}</strong></button>
-										{% endif %}
-									</div>
-								{% endfor %}
-							{% else %}
-								<div class="col pt-1">
-									<div class="container rounded text-center" style="background-color: #7F5539; width: 150px; height: 30px">
-										<h6 class="pt-1 text-light"><strong>FINISHED</strong></h6>
-									</div>
-								</div>
-							{% endif %}
-						</div>
-						<div class="row px-3 py-1">
-							<div class="col text-center" style="position: relative; left: 20px;">
-								<button type="submit" value="undo" name="undo" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Undo Move</button>
-							</div>
-							<div class="col text-center" style="position: relative; left: -20px;">
-								<button type="submit" value="restart" name="restart" class="btn text-light mx-2" style="width: 150px; background-color: #6D6875;" role="button">Restart</button>
-							</div>
-						</div>
+		<div class="row mt-3">
+			<div class="col-12">
+				<div class="container text-center">
+					<div id="move-buttons-container" class="mb-3"></div>
+					<div class="d-flex justify-content-center gap-3">
+						<button id="undo-btn" class="btn text-light" style="width: 150px; background-color: #6D6875;" role="button">Undo Move</button>
+						<button id="restart-btn" class="btn text-light" style="width: 150px; background-color: #6D6875;" role="button">Restart</button>
 					</div>
 				</div>
-			</form>
+			</div>
 		</div>
 	</div>
-	<div class="container text-center" style="max-width: 500px;">
+	<div class="container text-center mt-3" style="max-width: 500px;">
 		<div class="row">
 			<div class="col text-center">
 				<a href="{% url 'repertoire:opening_variations' opening.slug %}" class="btn text-light" style="width: 200px; background-color: #6D6875;" role="button">Other Variations</a>
 			</div>
 			<div class="col text-center">
-				<a href="{% url 'repertoire:practice' opening.name variation.slug %}" class="btn text-light" style="width: 200px; background-color: #6D6875;" role="button">Practice</a>
+				<a id="practice-btn" href="{% url 'repertoire:practice' opening.name variation.slug %}" class="btn text-light" style="width: 200px; background-color: #6D6875;" role="button">Practice</a>
 			</div>
 		</div>
 	</div>
 </div>
+
+<!-- JavaScript Libraries -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+<script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+
+<!-- Custom Review Board Styles -->
+<link rel="stylesheet" href="{% static 'repertoire/css/review_board.css' %}">
+
+<!-- Django variables for JavaScript -->
+<script>
+    var playerColor = '{{ opening.color|yesno:"b,w" }}';
+    var openingName = '{{ opening.name }}';
+    var variationSlug = '{{ variation.slug }}';
+    var csrfToken = '{{ csrf_token }}';
+    var executeMoveUrl = '{% url "repertoire:review_execute_move" opening.name variation.slug %}';
+    var undoMoveUrl = '{% url "repertoire:review_undo_move" opening.name variation.slug %}';
+    var restartUrl = '{% url "repertoire:review_restart" opening.name variation.slug %}';
+    var getPositionUrl = '{% url "repertoire:review_get_position" opening.name variation.slug %}';
+    var nagImagesPath = '{% static "repertoire/nag/" %}';
+</script>
+
+<!-- Custom Review Board Logic -->
+<script src="{% static 'repertoire/js/review_board.js' %}"></script>
+
 {% endblock %}
