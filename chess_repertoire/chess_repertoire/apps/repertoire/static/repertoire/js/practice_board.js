@@ -4,11 +4,46 @@ var board = null;
 var isPlayerTurn = true;
 var practiceFinished = false;
 var squareToHighlight = null;
+var pendingMove = null; // Store pending promotion move
+var promotionModal = null; // Store modal instance
+var statsUpdateInterval = null; // Statistics polling interval
+
+// Statistics functions - polls server every 2 seconds for updated stats
+function initStatistics() {
+    statsUpdateInterval = setInterval(updateStatistics, 2000);
+    updateStatistics(); // Initial update
+}
+
+function updateStatistics() {
+    $.ajax({
+        url: getStatisticsUrl,
+        type: 'GET',
+        success: function(response) {
+            $('#stat-accuracy').text(response.accuracy.toFixed(1) + '%');
+            $('#stat-correct').text(response.correct_moves);
+            $('#stat-incorrect').text(response.incorrect_moves);
+            $('#stat-hints').text(response.hints_used);
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching statistics:', error);
+        }
+    });
+}
+
+function showCompletionModal(stats) {
+    $('#final-accuracy').text(stats.accuracy.toFixed(1) + '%');
+    $('#final-correct').text(stats.correct_moves);
+    $('#final-incorrect').text(stats.incorrect_moves);
+    $('#final-hints').text(stats.hints_used);
+    $('#completionModal').modal('show');
+}
 
 // Initialize board when page loads
 $(document).ready(function() {
     initBoard();
+    initPromotionModal();
     loadPositionFromServer();
+    initStatistics(); // Initialize statistics polling
 
     // Event handlers for buttons
     $('#restart-btn').click(function() {
@@ -55,6 +90,59 @@ function pieceTheme(piece) {
     return '/static/repertoire/pieces/' + pieceMap[piece];
 }
 
+// Initialize promotion modal and event handlers
+function initPromotionModal() {
+    var modalElement = document.getElementById('promotionModal');
+    promotionModal = new bootstrap.Modal(modalElement, {
+        backdrop: 'static',
+        keyboard: false
+    });
+
+    setPieceImages();
+
+    $('.promotion-piece').click(function() {
+        var piece = $(this).data('piece');
+        onPromotionPieceSelected(piece);
+    });
+}
+
+function setPieceImages() {
+    var color = playerColor === 'w' ? 'white' : 'black';
+    var basePath = '/static/repertoire/pieces/';
+    $('#promo-queen-img').attr('src', basePath + color + '_queen.png');
+    $('#promo-rook-img').attr('src', basePath + color + '_rook.png');
+    $('#promo-bishop-img').attr('src', basePath + color + '_bishop.png');
+    $('#promo-knight-img').attr('src', basePath + color + '_knight.png');
+}
+
+function isPawnPromotion(source, target) {
+    var piece = game.get(source);
+    if (!piece || piece.type !== 'p') return false;
+    var targetRank = target.charAt(1);
+    return (piece.color === 'w' && targetRank === '8') ||
+           (piece.color === 'b' && targetRank === '1');
+}
+
+function onPromotionPieceSelected(piece) {
+    if (!pendingMove) return;
+    promotionModal.hide();
+    completeMoveWithPromotion(pendingMove.source, pendingMove.target, piece);
+    pendingMove = null;
+}
+
+function completeMoveWithPromotion(source, target, promotionPiece) {
+    var move = game.move({from: source, to: target, promotion: promotionPiece});
+    if (move === null) {
+        console.error('Promotion move failed');
+        board.position(game.fen());
+        isPlayerTurn = true;
+        return;
+    }
+    board.position(game.fen());
+    isPlayerTurn = false;
+    validateMoveWithServer(move.san, move);
+}
+
 // Validate drag start
 function onDragStart(source, piece, position, orientation) {
     // Don't allow moves if game is over or not player's turn
@@ -77,26 +165,19 @@ function onDrop(source, target) {
     // Remove legal move highlights
     removeHighlights();
 
-    // Check if the move is legal in chess.js
-    var move = game.move({
-        from: source,
-        to: target,
-        promotion: 'q' // Always promote to queen for now
-    });
-
-    // If illegal move in chess.js, snap back
-    if (move === null) {
-        return 'snapback';
+    // Check if this is a pawn promotion
+    if (isPawnPromotion(source, target)) {
+        pendingMove = {source: source, target: target};
+        promotionModal.show();
+        return 'snapback'; // Piece will be placed after selection
     }
 
-    // Disable player moves while validating
+    // Regular move
+    var move = game.move({from: source, to: target});
+    if (move === null) return 'snapback';
+
     isPlayerTurn = false;
-
-    // Extract SAN notation
-    var sanMove = move.san;
-
-    // Validate with server
-    validateMoveWithServer(sanMove, move);
+    validateMoveWithServer(move.san, move);
 }
 
 // Update board position after snap animation
@@ -145,6 +226,7 @@ function validateMoveWithServer(sanMove, moveObj) {
             if (response.correct) {
                 // Show correct status
                 updateStatus('correct');
+                updateStatistics(); // Update stats after correct move
 
                 // Check if there's an opponent move
                 if (response.opponent_move) {
@@ -156,6 +238,15 @@ function validateMoveWithServer(sanMove, moveObj) {
                     // Practice finished
                     practiceFinished = true;
                     updateStatus('finished');
+
+                    // Show completion modal with final statistics
+                    setTimeout(function() {
+                        $.ajax({
+                            url: getStatisticsUrl,
+                            type: 'GET',
+                            success: showCompletionModal
+                        });
+                    }, 1000);
                 }
             } else {
                 // Move is incorrect - undo it
@@ -163,6 +254,7 @@ function validateMoveWithServer(sanMove, moveObj) {
                 board.position(game.fen());
                 updateStatus('incorrect');
                 isPlayerTurn = true;
+                updateStatistics(); // Update stats after incorrect move
             }
         },
         error: function(xhr, status, error) {
@@ -259,6 +351,7 @@ function showHint() {
             }
 
             updateStatus('hint');
+            updateStatistics(); // Update stats after hint
         },
         error: function(xhr, status, error) {
             console.error('Error getting hints:', error);
@@ -270,6 +363,12 @@ function showHint() {
 // Restart practice
 function restartPractice() {
     removeHighlights();
+
+    // Clear pending promotion
+    if (pendingMove) {
+        promotionModal.hide();
+        pendingMove = null;
+    }
 
     $.ajax({
         url: restartUrl,
@@ -288,6 +387,8 @@ function restartPractice() {
 
             // Clear status
             $('#status-container').html('');
+            updateStatistics(); // Update stats after restart
+            $('#completionModal').modal('hide'); // Hide completion modal
         },
         error: function(xhr, status, error) {
             console.error('Error restarting:', error);

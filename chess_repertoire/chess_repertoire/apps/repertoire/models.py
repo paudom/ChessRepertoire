@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 
 from django.conf import settings
@@ -85,6 +86,27 @@ class Opening(models.Model):
     class Meta:
         ordering = ['name']
 
+    def delete(self, *args, **kwargs):
+        """Override delete to remove empty opening directory after files are deleted."""
+        # Get directory path before deletion
+        opening_folder = self.name.replace(' ', '_').lower()
+        opening_dir = Path(settings.MEDIA_ROOT) / opening_folder
+
+        # Call parent delete (django-cleanup will remove files, CASCADE will delete variations)
+        super().delete(*args, **kwargs)
+
+        # Remove opening directory if it exists (will remove even if has subdirs)
+        if opening_dir.exists() and opening_dir.is_dir():
+            try:
+                # Use rmdir for empty dirs, or shutil.rmtree if cascade deleted variations
+                if not any(opening_dir.iterdir()):
+                    opening_dir.rmdir()
+                else:
+                    shutil.rmtree(opening_dir)
+            except OSError:
+                # Error during removal, skip silently
+                pass
+
     def get_absolute_url(self):
         return reverse('repertoire:opening_detail', kwargs={'slug': self.slug})
 
@@ -136,12 +158,39 @@ class Variation(models.Model):
     class Meta:
         ordering = ['on_turn', 'name']
         unique_together = ['name', 'on_turn']
-    
+
+    def delete(self, *args, **kwargs):
+        """Override delete to remove empty variation directory after files are deleted."""
+        # Get directory paths before deletion
+        opening_folder = self.opening.name.replace(' ', '_').lower()
+        variation_folder = self.name.replace(' ', '_').lower()
+        variation_dir = Path(settings.MEDIA_ROOT) / opening_folder / variation_folder
+        opening_dir = Path(settings.MEDIA_ROOT) / opening_folder
+
+        # Call parent delete (django-cleanup will remove files)
+        super().delete(*args, **kwargs)
+
+        # Remove variation directory if it exists and is empty
+        if variation_dir.exists() and variation_dir.is_dir():
+            try:
+                variation_dir.rmdir()  # Only removes if empty
+            except OSError:
+                # Directory not empty or other error, skip silently
+                pass
+
+        # Also remove opening directory if it's now empty
+        if opening_dir.exists() and opening_dir.is_dir():
+            try:
+                opening_dir.rmdir()  # Only removes if empty
+            except OSError:
+                # Directory not empty or other error, skip silently
+                pass
+
     def get_absolute_url(self):
         return reverse('repertoire:opening_variations', kwargs={'slug': self.opening.slug})
 
     def __str__(self) -> str:
         return f'{self.name} {self.__class__.__name__} from {self.opening.name}'
-    
+
     def __repr__(self) -> str:
         return f'{super().__repr__()}:{self.__class__.__name__}:{self.name}'

@@ -66,3 +66,75 @@
     width: 150px;
     text-align: center;
 }
+
+/* Promotion Modal */
+#promotionModal .modal-content {
+    border: 2px solid #6D6875;
+    border-radius: 10px;
+}
+
+.promotion-piece {
+    background-color: transparent;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    width: 100%;
+}
+
+.promotion-piece:hover {
+    background-color: rgba(109, 104, 117, 0.3);
+    border-color: #6D6875;
+    transform: scale(1.05);
+}
+
+.promotion-piece:focus {
+    outline: 2px solid #6D6875;
+    outline-offset: 2px;
+}
+
+#promotionModal {
+    z-index: 9999;
+}
+
+/* Statistics Panel */
+.stat-box {
+    padding: 5px;
+}
+
+.stat-label {
+    font-size: 11px;
+    color: #F5F3F4;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-size: 18px;
+    color: #DDB892;
+    font-weight: bold;
+}
+
+/* Completion Modal */
+.completion-stat {
+    background-color: #6D6875;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 5px;
+}
+
+.completion-label {
+    font-size: 14px;
+    color: #DDB892;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.completion-value {
+    font-size: 32px;
+    color: #F5F3F4;
+    font-weight: bold;
+}

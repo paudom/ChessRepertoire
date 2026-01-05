@@ -9,6 +9,7 @@ import json
 from chess_repertoire.apps.game import (
     ChessReviewer, ChessPractice, get_current_turn, read_pgn_file, update_pgn_file
 )
+from chess_repertoire.apps.game.statistics import PracticeStatistics
 from .constants import MAX_OPENING_PER_PAGE, MAX_VARIATION_PER_PAGE
 from .models import Opening, Variation
 from .forms import OpeningForm, VariationForm
@@ -212,7 +213,16 @@ class PracticeVariation(View):
         self.request.session['moves'] = self.practice.run_visited_moves(
             self.request.session['moves']
         )
-        
+
+        # Initialize statistics if needed
+        stats = PracticeStatistics.get_stats(self.request.session)
+        if not stats or stats.get('variation_slug') != self.kwargs['slug']:
+            PracticeStatistics.initialize_stats(
+                self.request.session,
+                self.opening.name,
+                self.variation.slug
+            )
+
         return super().dispatch(request, *args, **kwargs)
 
     def get(self, request, *args, **kwargs):
@@ -260,6 +270,9 @@ class PracticeValidateMove(PracticeAjaxMixin, View):
 
         # Validate the move
         if practice.check_if_correct(move):
+            # Record correct move
+            PracticeStatistics.record_move(request.session, move, correct=True)
+
             try:
                 # Execute player move and get opponent's response
                 opp_move = practice.player_move(move)
@@ -274,6 +287,7 @@ class PracticeValidateMove(PracticeAjaxMixin, View):
                 })
             except Exception:
                 # No opponent move available (practice finished)
+                PracticeStatistics.mark_completed(request.session)
                 request.session['moves'] += [move]
                 return JsonResponse({
                     'correct': True,
@@ -283,6 +297,9 @@ class PracticeValidateMove(PracticeAjaxMixin, View):
                     'nag': practice.nag
                 })
         else:
+            # Record incorrect move
+            PracticeStatistics.record_move(request.session, move, correct=False)
+
             # Move is incorrect
             return JsonResponse({
                 'correct': False,
@@ -335,6 +352,9 @@ class PracticeGetHints(PracticeAjaxMixin, View):
                 'san': practice.state.board().san(variation_move)
             })
 
+        # Record hint usage
+        PracticeStatistics.record_hint(request.session)
+
         return JsonResponse({
             'legal_moves': legal_moves,
             'nag': practice.nag
@@ -361,3 +381,31 @@ class PracticeRestart(PracticeAjaxMixin, View):
             'is_player_turn': is_player_turn,
             'nag': practice.nag
         })
+
+
+class PracticeGetStatistics(View):
+    """AJAX endpoint to get current statistics"""
+
+    def get(self, request, *args, **kwargs):
+        try:
+            stats = PracticeStatistics.get_stats(request.session)
+
+            if not stats:
+                return JsonResponse({'error': 'No statistics'}, status=404)
+
+            if (stats.get('opening_name') != kwargs['opn'] or
+                stats.get('variation_slug') != kwargs['slug']):
+                return JsonResponse({'error': 'Stats mismatch'}, status=400)
+
+            summary = PracticeStatistics.get_stats_summary(stats)
+
+            return JsonResponse({
+                'correct_moves': stats['correct_moves'],
+                'incorrect_moves': stats['incorrect_moves'],
+                'hints_used': stats['hints_used'],
+                'accuracy': summary['accuracy'],
+                'total_attempts': summary['total_attempts'],
+                'completed': stats['completed']
+            })
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)

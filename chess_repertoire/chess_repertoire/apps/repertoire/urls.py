@@ -19,5 +19,6 @@ urlpatterns = [
     path('<str:opn>/<slug:slug>/practice/validate_move/', views.PracticeValidateMove.as_view(), name='practice_validate_move'),
     path('<str:opn>/<slug:slug>/practice/get_position/', views.PracticeGetPosition.as_view(), name='practice_get_position'),
     path('<str:opn>/<slug:slug>/practice/get_hints/', views.PracticeGetHints.as_view(), name='practice_get_hints'),
-    path('<str:opn>/<slug:slug>/practice/restart/', views.PracticeRestart.as_view(), name='practice_restart')
+    path('<str:opn>/<slug:slug>/practice/restart/', views.PracticeRestart.as_view(), name='practice_restart'),
+    path('<str:opn>/<slug:slug>/practice/get_statistics/', views.PracticeGetStatistics.as_view(), name='practice_get_statistics')
 ]

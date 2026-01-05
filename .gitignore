@@ -115,7 +115,7 @@ venv.bak/
 CLAUDE.md
 
 # Documentation plans (keep local only, not in git)
-**/docs/plans/
+**/plans/
 
 # Spyder project settings
 .spyderproject
